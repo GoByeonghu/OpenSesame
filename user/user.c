@@ -59,3 +59,50 @@ static void getUsrInfo(char *ID, char *PW)
     ID[strlen(ID) - 1] = '\0';
     PW[strlen(PW) - 1] = '\0';
 }
+
+// [Name]: openDoorLock
+// [Function]: 도어락 열지 말지 사용자 명령어를 받음
+// [input]: ID(char *), PW(char *)
+// [output]: statsu(int)
+int openDoorLock(char *ID, char *PW) {
+	char choice[2];
+	char inputID[MAX_IDPW_LENGTH];
+	char inputPW[MAX_IDPW_LENGTH];
+	
+	while(1)
+	{
+    	printf("\n===== 도어락을 여시겠습니까? [Y/N] ===== ");
+		if (!fgets(choice, 1, stdin))
+		{
+			perror("명령어 입력이 잘못되었습니다.\n");
+			return 0; // fail
+		}
+		
+		if (choice[0] == 'y' || choice[0] == 'Y')
+		{
+			printf("ID: ");
+    		if (!fgets(inputID, MAX_IDPW_LENGTH, stdin))
+    		{
+        		perror("\n아이디 입력이 잘못되었습니다.\n");
+        		return 0;
+    		}
+
+    		printf("PW: ");
+    		if (!fgets(inputPW, MAX_IDPW_LENGTH, stdin))
+    		{
+        		perror("\n패스워드 입력이 잘못되었습니다.\n");
+				return 0;
+			}
+
+    		// 입력에 성공했다면 개행문자 제거
+    		inputID[strlen(inputID) - 1] = '\0';
+    		inputPW[strlen(inputPW) - 1] = '\0';
+
+			if (strcmp(
+		}
+
+	}
+
+	// success
+    return 1;	
+}
