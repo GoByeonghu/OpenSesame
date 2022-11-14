@@ -91,9 +91,8 @@ int main(){
 
 		fclose(file);
 
-		//printf("Received request: %s......",msg.data);
 		msg.type=MSG_REPLY;
-		sprintf(msg.data,"This is a reply from %d.",getpid());
+		sprintf(msg.data,"도어락 고유 번호: %s.", DOORLOCK);
 
 		// 연결된 client socket descriptor로 reply를 보냄
 		if(write(newSockfd,&msg,sizeof(msg))<0){

@@ -61,15 +61,9 @@ int main(){
 		int fpsize = fread(buf, 1, 256, file);
 		nsize += fpsize;
 		send(sockfd, buf, fpsize, 0);
+		// write(sockfd, buf, fpsize);
 	}
 	
-	// sd에 request를 보낸다.
-	/*
-	if(write(sockfd,&msg,sizeof(msg))<0){
-		perror("write");
-		exit(1);
-	}
-	*/
 	fclose(file);
 	printf("===== 공개키 전송을 시작합니다... =====\n");
 	
