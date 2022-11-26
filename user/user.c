@@ -1,4 +1,4 @@
-/* 도어락 단 */
+/* 도어락 단 main */
 
 #include "user.h"
 #define MAX_IDPW_LENGTH 100

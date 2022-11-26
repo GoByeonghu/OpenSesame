@@ -1,12 +1,3 @@
-/*==========================================================================
- * [Program Name]: tcpc.c 
- * [Description]: tcp 통신을 하는 client process
- * [Input]: nothing
- * [Output]: nothing
- * [Calls]: socket, bzero, connect, perror, exit, write, read, close
- * [특기사항]: nothing
- =========================================================================== */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -18,13 +9,21 @@
 #include <string.h>
 #include "tcp.h"
 
-int main(){
+// 플래그 1: 공개키
+// 플래그 2: do_encrpyt() 결과 파일
+
+#define SEND_PUBLICKEY 1
+#define SEND_ENCRYPTFILE 2
+
+int sendToDoorlock(int flag) {
 	int sockfd, n;
 	struct sockaddr_in servAddr;
 	FILE *file;
 	char buf[256];
+	int sendFlag;
 	size_t fsize, nsize = 0;
 	MsgType msg;
+	Encrypt enc;
 
 	// socket을 생성한다.
 	// 이때 ipv4(PF_INET), TCP(SOCK_STREAM)를 파라미터로 설정한다.
@@ -33,10 +32,9 @@ int main(){
 		exit(1);
 	}
 
-	bzero(&servAddr,sizeof(servAddr));		// 초기화
-	servAddr.sin_family=PF_INET;			// ipv4
-	servAddr.sin_port=htons(SERV_TCP_PORT);		// port 번호를 network byte order로 변경
-	servAddr.sin_addr.s_addr=inet_addr(SERV_HOST_ADDR); // dotted decimal을 4 byte int ip 주소로 변경
+	bzero(&servAddr,sizeof(servAddr));		
+	servAddr.sin_family=PF_INET;			
+	servAddr.sin_addr.s_addr=inet_addr(SERV_HOST_ADDR); 
 
 	// connect로 server의 주소에 접속해서 연결한다.
 	if(connect(sockfd,(struct sockaddr *)&servAddr, sizeof(servAddr))<0){
@@ -44,37 +42,86 @@ int main(){
 		exit(1);
 	}
 
-	msg.type=MSG_REQUEST;
-	sprintf(msg.data,"===== 공개키 전송을 시작합니다... ===== ");
-	
-	// 공개키 파일 이름
-	file = fopen("public.pem", "rb");
-	fseek(file, 0, SEEK_END);
-	// calculate file size
-	fsize=ftell(file);
-	// move file pointer to first
-	fseek(file, 0, SEEK_SET);
+	// 공개키 보내는 경우
+	if (flag == SEND_PUBLICKEY) {
+		// 플래그 1을 먼저 보냄
+		sendFlag = flag;
+		send(sockfd, sendFlag, 4, 0);
+		
+		// 공개키 파일 이름
+		file = fopen("public.pem", "rb");
+		fseek(file, 0, SEEK_END);
+		fsize = ftell(file);
+		fseek(file, 0, SEEK_SET);
 
-	while (nsize!=fsize) {
-		// read from file to buf
-		// 1byte * 256 count = 256byte => buf[256];
-		int fpsize = fread(buf, 1, 256, file);
-		nsize += fpsize;
-		send(sockfd, buf, fpsize, 0);
-		// write(sockfd, buf, fpsize);
+		while (nsize != fsize) {
+			int fpsize = fread(buf, 1, 256, file);
+			nsize += fpsize;
+			send(sockfd, buf, fpsize, 0);
+		}		
+		fclose(file);
+		
+		printf("===== 공개키 전송을 시작합니다... =====\n");
+		
+		// sd에서 서버에서 온 reply를 읽는다.
+		if((n=read(sockfd,&msg,sizeof(msg)))<0){
+			perror("read");
+			exit(1);
+		}
+
+		// 수신 성공한 경우
+		if (msg.type) {
+			printf("도어락 고유번호: %s\n", msg.data);
+			// 도어락 고유 번호 저장
+			tee_store("doorlock_serialnumber", msg.data);
+		}
+		// 수신 실패한 경우
+		else {
+			printf("도어락 고유번호 수신 실패\n");
+		}
+		close(sockfd); // sd 닫음
+	}
+
+	// do_encrypt() 결과 파일 보내는 경우
+	else if (flag == SEND_ENCRYPTFILE) {
+		// 플래그 0을 먼저 보냄
+		sendFlag = flag;
+		send(sockfd, sendFlag, 4, 0);
+	
+		// todo: 대칭키 파일 이름
+		file = fopen("symmetrickeyfilename", "rb");
+		fseek(file, 0, SEEK_END);
+		fsize = ftell(file);
+		fseek(file, 0, SEEK_SET);
+
+		while (nsize != fsize) {
+			int fpsize = fread(buf, 1, 256, file);
+			nsize += fpsize;
+			send(sockfd, buf, fpsize, 0);
+		}		
+		fclose(file);
+		
+		// todo: do_encrypt file 전송
+
+		// sd에서 서버에서 온 reply를 읽는다.
+		if((n = read(sockfd, &msg, sizeof(msg)))<0){
+			perror("read");
+			exit(1);
+		}
+		
+		// 전송 성공한 경우
+		if (msg.type) {
+			printf("암호문 전송 성공\n");
+		}
+		// 전송 실패한 경우
+		else {
+			printf("암호문 전송 실패\n");
+		}
+		
+		close(sockfd); 
+
 	}
 	
-	fclose(file);
-	printf("===== 공개키 전송을 시작합니다... =====\n");
-	
-	// sd에서 서버에서 온 reply를 읽는다.
-	if((n=read(sockfd,&msg,sizeof(msg)))<0){
-		perror("read");
-		exit(1);
-	}
-	printf("Received reply: %s\n",msg.data);
-	close(sockfd); // sd 닫음
-
 	return 0;
 }
 
