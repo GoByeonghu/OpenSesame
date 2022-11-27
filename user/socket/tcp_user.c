@@ -9,11 +9,7 @@
 #include <string.h>
 #include "tcp.h"
 
-// 플래그 1: 공개키
-// 플래그 2: do_encrpyt() 결과 파일
-
-#define SEND_PUBLICKEY 1
-#define SEND_ENCRYPTFILE 2
+// 파라미터 flag: 1(공개키), 2(암호문), 3(대칭키)
 
 int sendToDoorlock(int flag) {
 	int sockfd, n;
@@ -44,6 +40,8 @@ int sendToDoorlock(int flag) {
 
 	// 공개키 보내는 경우
 	if (flag == SEND_PUBLICKEY) {
+		printf("===== 공개키 전송을 시작합니다... =====\n");
+
 		// 플래그 1을 먼저 보냄
 		sendFlag = flag;
 		send(sockfd, sendFlag, 4, 0);
@@ -61,8 +59,6 @@ int sendToDoorlock(int flag) {
 		}		
 		fclose(file);
 		
-		printf("===== 공개키 전송을 시작합니다... =====\n");
-		
 		// sd에서 서버에서 온 reply를 읽는다.
 		if((n=read(sockfd,&msg,sizeof(msg)))<0){
 			perror("read");
@@ -70,7 +66,7 @@ int sendToDoorlock(int flag) {
 		}
 
 		// 수신 성공한 경우
-		if (msg.type) {
+		if (msg.type == MSG_OK) {
 			printf("도어락 고유번호: %s\n", msg.data);
 			// 도어락 고유 번호 저장
 			tee_store("doorlock_serialnumber", msg.data);
@@ -79,17 +75,18 @@ int sendToDoorlock(int flag) {
 		else {
 			printf("도어락 고유번호 수신 실패\n");
 		}
-		close(sockfd); // sd 닫음
+		close(sockfd);
 	}
 
 	// do_encrypt() 결과 파일 보내는 경우
 	else if (flag == SEND_ENCRYPTFILE) {
-		// 플래그 0을 먼저 보냄
+		printf("===== 암호문 전송을 시작합니다... =====\n");
+		// 플래그 2을 먼저 보냄
 		sendFlag = flag;
 		send(sockfd, sendFlag, 4, 0);
 	
-		// todo: 대칭키 파일 이름
-		file = fopen("symmetrickeyfilename", "rb");
+		// do_encrypt() file 전송
+		file = fopen("encrpyted_string", "rb");
 		fseek(file, 0, SEEK_END);
 		fsize = ftell(file);
 		fseek(file, 0, SEEK_SET);
@@ -100,8 +97,6 @@ int sendToDoorlock(int flag) {
 			send(sockfd, buf, fpsize, 0);
 		}		
 		fclose(file);
-		
-		// todo: do_encrypt file 전송
 
 		// sd에서 서버에서 온 reply를 읽는다.
 		if((n = read(sockfd, &msg, sizeof(msg)))<0){
@@ -120,6 +115,43 @@ int sendToDoorlock(int flag) {
 		
 		close(sockfd); 
 
+	}
+
+	// 대칭키 파일 보내는 경우
+	else if (flag == SEND_SYMKEY) {
+		printf("===== 대칭키 전송을 시작합니다... =====\n");
+		// 플래그 3을 먼저 보냄
+		sendFlag = flag;
+		send(sockfd, sendFlag, 4, 0);
+	
+		file = fopen("SymmetricKey256.txt", "rb");
+		fseek(file, 0, SEEK_END);
+		fsize = ftell(file);
+		fseek(file, 0, SEEK_SET);
+
+		while (nsize != fsize) {
+			int fpsize = fread(buf, 1, 256, file);
+			nsize += fpsize;
+			send(sockfd, buf, fpsize, 0);
+		}		
+		fclose(file);
+
+		// sd에서 서버에서 온 reply를 읽는다.
+		if((n = read(sockfd, &msg, sizeof(msg)))<0){
+			perror("read");
+			exit(1);
+		}
+		
+		// 전송 성공한 경우
+		if (msg.type) {
+			printf("대칭키 전송 성공\n");
+		}
+		// 전송 실패한 경우
+		else {
+			printf("대칭키 전송 실패\n");
+		}
+		
+		close(sockfd); 
 	}
 	
 	return 0;

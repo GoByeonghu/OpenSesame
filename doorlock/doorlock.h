@@ -1,4 +1,4 @@
-// user header file
+// doorlock header file
 
 #include <stdio.h>
 #include <unistd.h>

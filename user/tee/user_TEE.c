@@ -57,7 +57,7 @@ char *encrpyt() {
 }
 
 
-// todo: do_encrpyt()
+// todo: 이걸 호출하는 곳은 어디??
 void do_encrypt() {
 	char	*encrypted_string;
 	FILE	*file;
