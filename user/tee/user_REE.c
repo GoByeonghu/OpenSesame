@@ -33,7 +33,7 @@ int tee_getSymKey(){
 	}
 	// tee 프로세스
 	else if (pid == 0){
-		genSymKey()
+		genSymKey();
 	}
 
 	// 현재( == user)  프로세스
@@ -41,18 +41,17 @@ int tee_getSymKey(){
 		waitpid(pid, &status, 0);
 
 		// genSymKey()가 성공했는지 아닌지 체크
-		printf(msg, pData);
+		sprintf(msg, ptr);
 
 		// 성공했을 경우
 		if (msg) {
-
+			printf("대칭키 생성 성공\n");
 		}
 
 		// 실패했을 경우
 		else {
-
+			printf("대칭키 생성 실패\n");
 		}
-
 
 		// shared memory mapping 해제
 		if(shmdt(ptr)<0){

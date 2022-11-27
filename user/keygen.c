@@ -138,10 +138,10 @@ int makeRSAkey(int keyLen) {
 		    closefiles();
 	    }
 	    RSA_free(rsa);
-	    return 0; // success
+	    return 1; // success
     }
     else {
-	    return 1; // failed
+	    return 0; // failed
     
     }
 }
