@@ -9,7 +9,8 @@
 #include <string.h>
 #include "shm.h"
 
-// 동기화 처리 필요
+void tee_store(char *, char *);
+
 void genSymKey(){
 	char *ptr;
 	int shmid;
@@ -27,12 +28,10 @@ void genSymKey(){
 		exit(1);
 	}
 
-	// todo: 대칭키를 생성하고 file로 저장하는 함수 호출
-
+	// 대칭키를 생성하고 file로 저장하는 함수 호출
+	error = AES_CreateKey();
 
 	char *pData=ptr;
-
-	error = 1;
 	// 대칭키 생성이 오류난 경우: shared memory에 0 씀
 	if (error) 
 		sprintf(pData, 0);
@@ -51,9 +50,10 @@ void genSymKey(){
 char *encrpyt() {
 	char *encrpyted_string;
 
+	// todo: 암호화 하기
 	sprintf(encrpyted_string, "암호화된 문장");
 
-	return encypted_string;
+	return encrpyted_string;
 }
 
 
@@ -62,29 +62,36 @@ void do_encrypt() {
 	char	*encrypted_string;
 	FILE	*file;
 	
-	encrypted_string = encrpyt()
+	encrypted_string = encrpyt();
 
 	// encrpyt() 결과를 파일로 저장
-	tee_store("encrpyted_string", encrpyted_string);	
+	tee_store("encrpyted_string", encrypted_string);
 }
-
-
 
 // 파일로 저장
 void tee_store(char *filename, char *data) {
 	FILE	*file;
+	char	*pt;
 
 	file = fopen(filename, "wt");
 	fseek(file, 0, SEEK_SET);
 
-	char	*pt = data;
-	while(pt) {
+	pt = data;
+	while (pt) {
 		fputc(*pt, file);
 		pt++;
 	}
 }
 
-// todo: 파일 읽기
-void tee_open(char *filename) {
+// 파일 읽기
+unsigned char *tee_read(char *filename) {
+   FILE *file;
+   unsigned char buf[100000];
 
+   file = fopen(filename, "r");
+   fseek(file, 0, SEEK_SET);
+   
+   while (fgets(buf, 256, file)) {}
+   fclose(file);
+   return buf;
 }

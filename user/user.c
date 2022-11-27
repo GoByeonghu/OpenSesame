@@ -11,7 +11,17 @@ static void getUsrInfo(char *, char *);
 // [output]: nothing
 int main(int argc, char *argv[])
 {
-    // todo: 임시 데이터 저장 용도 배열
+
+
+
+}
+
+// [Name]: register_user()
+// [Function]: 사용자 회원가입 및 RSA 비대칭 키 생성
+// [input]: nothing
+// [output]: 상태 값(int)
+int register_user()
+{
     char ID[100];
     char PW[100];
 
@@ -20,15 +30,20 @@ int main(int argc, char *argv[])
     // 입력 test
     //printf("%s, %s\n", ID, PW);
 
+	// 사용자 정보 저장
+	tee_store("ID", ID);
+	tee_store("PW", PW);
+
+	// RSA 비대칭키 생성 및 저장
     int keylen = 4096;
     if (makeRSAkey(keylen) == 0) {
 	    printf("키 생성을 성공하였습니다.\n");
     }
     else {
 	    printf("키 생성을 실패하였습니다. 프로그램을 종료합니다.\n");
-	    exit(1);
+	    return 0;
     }
-    return 0;
+    return 1;
 }
 
 
@@ -60,11 +75,11 @@ static void getUsrInfo(char *ID, char *PW)
     PW[strlen(PW) - 1] = '\0';
 }
 
-// [Name]: openDoorLock
+// [Name]: tee_control
 // [Function]: 도어락 열지 말지 사용자 명령어를 받음
 // [input]: ID(char *), PW(char *)
-// [output]: statsu(int)
-int openDoorLock(char *ID, char *PW) {
+// [output]: 상태 값(int)
+int tee_control(char *ID, char *PW) {
 	char choice[2];
 	char inputID[MAX_IDPW_LENGTH];
 	char inputPW[MAX_IDPW_LENGTH];
@@ -97,9 +112,10 @@ int openDoorLock(char *ID, char *PW) {
     		// 입력에 성공했다면 개행문자 제거
     		inputID[strlen(inputID) - 1] = '\0';
     		inputPW[strlen(inputPW) - 1] = '\0';
-
-			if (strcmp(
 		}
+
+		// todo: 유저 인증
+		// 그냥 ok라고 하기
 
 	}
 
