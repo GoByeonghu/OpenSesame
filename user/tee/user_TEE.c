@@ -22,10 +22,10 @@ char *encrpyt(int flag) {
 
 	}
 
+	// 개폐 명령 암호화
 	else if (flag == 1) {
-
 	}
-	
+
 	sprintf(encrpyted_string, "암호화된 문장");
 
 	return encrpyted_string;

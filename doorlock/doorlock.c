@@ -8,5 +8,31 @@
 // [output]: nothing
 int main(int argc, char *argv[])
 {
+    /* 1. 도어락 등록 */
+    // 공개키 수신 (flag는 대충 넣었습니다... 쓰이진 않아요)
+    recvFromUser("PublicKey.pem", 0);
+
+    // key 암호문 수신
+    recvFromUser("encrpyted_string", 0);
+
+    /* 2. 도어락 개폐 수행 */
+    // 개폐 명령 암호문 수신
+    recvFromUser("opencommand", 1);
+
+    // 명목상 문 열기
+    int flag = 1;
+    openSesame(flag);
 }
 
+// [Name]: openSesame
+// [Function]: 문 개폐 제어
+// [input]: int flag (1: 열림, 0: 닫힘)
+// [output]: nothing
+void openSesame(int flag) {
+    if (flag == 1) {
+        printf("===== 문이 열렸습니다. =====");
+    }
+    else if (flag == 0) {
+        printf("====== 문이 닫혔습니다. =====");
+    }
+}

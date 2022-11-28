@@ -36,7 +36,7 @@ void CloseServer(int signo)
 	exit(0);
 }
 
-void recvFromUser(char *filename)
+void recvFromUser(char *filename, int fileFlag)
 {
 	int newSockfd, cliAddrLen, n;
 	struct sockaddr_in cliAddr, servAddr;
@@ -125,7 +125,7 @@ void recvFromUser(char *filename)
 		fclose(file);
 
 		int status;
-		status = tee_decrypt(filename);
+		status = tee_decrypt(filename, fileFlag);
 
 		// tee_decrypt 호출 결과 반환
 		if (status)
