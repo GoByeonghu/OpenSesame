@@ -2,16 +2,27 @@
 #include "shm.h"
 
 // todo: 무결섬 검증, 복호화, 파일로 결과 저장 (tee_store 호출)
-int decrpyt() {
+int decrpyt(int flag) {
+	// todo: 복호화 하기
+
+	// key 복호화
+	if (flag == 0) {
+
+	}
+
+	// 개폐 명령 복호화
+	else if (flag == 1) {
+	}
 
     return 1; // 성공 시 1, 실패 시 0
 }
 
 //
-void do_decrypt(char *filename) {
-	char *ptr;
-	int shmid;
-	int error;  // 복호화 에러 표시
+void do_decrypt(char *filename, int flag) {
+	char			*ptr;
+	int 			shmid;
+	int 			error;  // 복호화 에러 표시
+	unsigned char	*buf;
 
 	// SHM_KEY로 생성된 shared memor의 id를 shmid에 저장함
 	if((shmid=shmget(SHM_KEY,SHM_SIZE,SHM_MODE))<0){
@@ -25,8 +36,10 @@ void do_decrypt(char *filename) {
 		exit(1);
 	}
 
-	// 대칭키를 생성하고 file로 저장하는 함수 호출
-	error = decrpyt();
+	buf = tee_read(filename);
+
+	// 복호화 진행
+	error = decrpyt(flag);
 
 	char *pData=ptr;
 	// 복호화가 오류난 경우: shared memory에 0 씀
@@ -43,7 +56,30 @@ void do_decrypt(char *filename) {
 	}
 }
 
-// todo: decrypt 결과 저장
-void tee_store() {
+// 파일로 저장
+void tee_store(char *filename, char *data) {
+	FILE	*file;
+	char	*pt;
 
+	file = fopen(filename, "wt");
+	fseek(file, 0, SEEK_SET);
+
+	pt = data;
+	while (pt) {
+		fputc(*pt, file);
+		pt++;
+	}
+}
+
+// 파일 읽기
+unsigned char *tee_read(char *filename) {
+   FILE *file;
+   unsigned char buf[100000];
+
+   file = fopen(filename, "r");
+   fseek(file, 0, SEEK_SET);
+   
+   while (fgets(buf, 256, file)) {}
+   fclose(file);
+   return buf;
 }

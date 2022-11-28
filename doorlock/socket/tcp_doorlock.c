@@ -36,7 +36,7 @@ void CloseServer(int signo)
 	exit(0);
 }
 
-int sendToUser()
+void recvFromUser(char *filename)
 {
 	int newSockfd, cliAddrLen, n;
 	struct sockaddr_in cliAddr, servAddr;
@@ -88,7 +88,7 @@ int sendToUser()
 	// 공개키 수신하는 경우
 	if (flag == SEND_PUBLICKEY)
 	{
-		file = fopen("PublicKey.pem", "wb");
+		file = fopen(filename, "wb");
 		int nbyte = 256;
 		while (nbyte != 0)
 		{
@@ -112,10 +112,10 @@ int sendToUser()
 		close(newSockfd);
 	}
 
-	// do_encrypt() 결과 파일 수신하는 경우
+	// 암호문 파일 수신하는 경우
 	else if (flag == SEND_ENCRYPTFILE)
 	{
-		file = fopen("encrpyted_string", "wb");
+		file = fopen(filename, "wb");
 		int nbyte = 256;
 		while (nbyte != 0)
 		{
@@ -125,9 +125,9 @@ int sendToUser()
 		fclose(file);
 
 		int status;
-		status = tee_userinfo("encrpyted_string");
+		status = tee_decrypt(filename);
 
-		// tee_userinfo 호출 결과 반환
+		// tee_decrypt 호출 결과 반환
 		if (status)
 			msg.type = MSG_OK;
 		else
@@ -147,7 +147,7 @@ int sendToUser()
 
 	// 대칭키 수신하는 경우 (flag == 3)
 	else {
-		file = fopen("SymmetricKey256.txt", "wb");
+		file = fopen(filename, "wb");
 		int nbyte = 256;
 		while (nbyte != 0)
 		{

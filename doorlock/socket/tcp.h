@@ -6,6 +6,7 @@
 
 // 플래그 1: 공개키
 // 플래그 2: do_encrpyt() 결과 파일
+// 플래그 3: 대칭키 파일
 
 #define SEND_PUBLICKEY		1
 #define SEND_ENCRYPTFILE	2
