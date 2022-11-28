@@ -13,12 +13,32 @@ int main(int argc, char *argv[])
 {
 	int	status;
 
+	/* 1. 회원 가입 */
 	status = user_register();
 	if (!status) {
 		printf("프로그램을 종료합니다.");
 		exit(0);
 	}
+	
+	/* 2. 도어락 등록 */
+	// 공개키 전송(flag: 1, filename)
+	sendToDoorlock(1, "PublicKey.pem");
 
+	// 암호문 생성
+	tee_encrypt("encrpyted_string", 0);
+
+	// 암호문 전송
+	sendToDoorlock(2, "encrpyted_string");
+
+	/* 3. 개폐 명령 */
+	// 사용자 로그인하고 개폐 명령 입력
+	if (!tee_control()) {
+		printf("프로그램을 종료합니다.");
+		exit(0);
+	}
+
+	// 암호문 전송
+	sendToDoorlock(2, "opencommand");
 
 	return 0;
 }
@@ -85,12 +105,12 @@ static void getUsrInfo(char *ID, char *PW)
 
 // [Name]: tee_control
 // [Function]: 도어락 열지 말지 사용자 명령어를 받음
-// [input]: ID(char *), PW(char *)
+// [input]: nothing
 // [output]: 상태 값(int)
-int tee_control(char *ID, char *PW) {
+int tee_control() {
 	char choice[2];
-	char inputID[MAX_IDPW_LENGTH];
-	char inputPW[MAX_IDPW_LENGTH];
+	char ID[MAX_IDPW_LENGTH];
+	char PW[MAX_IDPW_LENGTH];
 	
 	while(1)
 	{
@@ -103,27 +123,14 @@ int tee_control(char *ID, char *PW) {
 		
 		if (choice[0] == 'y' || choice[0] == 'Y')
 		{
-			printf("ID: ");
-    		if (!fgets(inputID, MAX_IDPW_LENGTH, stdin))
-    		{
-        		perror("\n아이디 입력이 잘못되었습니다.\n");
-        		return 0;
-    		}
-
-    		printf("PW: ");
-    		if (!fgets(inputPW, MAX_IDPW_LENGTH, stdin))
-    		{
-        		perror("\n패스워드 입력이 잘못되었습니다.\n");
-				return 0;
-			}
-
-    		// 입력에 성공했다면 개행문자 제거
-    		inputID[strlen(inputID) - 1] = '\0';
-    		inputPW[strlen(inputPW) - 1] = '\0';
+			getUsrInfo(ID, PW);
 		}
 
 		// todo: 유저 인증
 		// 그냥 ok라고 하기
+
+		// 개폐 명령 암호화(flag: 1)
+		tee_encrypt("opencommand", 1);
 
 	}
 
