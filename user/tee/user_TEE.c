@@ -11,10 +11,33 @@
 
 void tee_store(char *, char *);
 
-void genSymKey(){
-	char *ptr;
-	int shmid;
-	int error;  // 대칭키 에러 표시
+// todo: encrpyt()
+char *encrpyt(int flag) {
+	char *encrpyted_string;
+
+	// todo: 암호화 하기
+
+	// key 암호화
+	if (flag == 0) {
+
+	}
+
+	else if (flag == 1) {
+
+	}
+	
+	sprintf(encrpyted_string, "암호화된 문장");
+
+	return encrpyted_string;
+}
+
+
+void do_encrypt(char *filename, int flag) {
+	FILE	*file;
+	char	*ptr;
+	char	*encrypted_string;
+	int		shmid;
+	int		error;  // 대칭키 에러 표시
 
 	// SHM_KEY로 생성된 shared memor의 id를 shmid에 저장함
 	if((shmid=shmget(SHM_KEY,SHM_SIZE,SHM_MODE))<0){
@@ -28,44 +51,35 @@ void genSymKey(){
 		exit(1);
 	}
 
-	// 대칭키를 생성하고 file로 저장하는 함수 호출
-	error = AES_CreateKey();
+	// 대칭키가 없는 경우 새로 생성하고 file로 저장하는 함수 호출
+	if (!flag) {
+		error = AES_CreateKey();
+	}
+	else {
+		error = 0;
+	}
 
 	char *pData=ptr;
 	// 대칭키 생성이 오류난 경우: shared memory에 0 씀
 	if (error) 
 		sprintf(pData, 0);
+
 	// 대칭키 생성이 성공인 경우: shared memory에 1 씀
-	else 
+	else {
 		sprintf(pData, 1);
+
+		// 대칭키 생성이 성공하면 암호화 호출
+		encrypted_string = encrpyt(flag);
+
+		// encrpyt() 결과를 파일로 저장
+		tee_store(filename, encrypted_string);
+	}
 
 	// shared memory mapping 해제
 	if(shmdt(ptr)<0){
 		perror("shmdt");
 		exit(1);
 	}
-}
-
-// todo: encrpyt()
-char *encrpyt() {
-	char *encrpyted_string;
-
-	// todo: 암호화 하기
-	sprintf(encrpyted_string, "암호화된 문장");
-
-	return encrpyted_string;
-}
-
-
-// todo: 이걸 호출하는 곳은 어디??
-void do_encrypt() {
-	char	*encrypted_string;
-	FILE	*file;
-	
-	encrypted_string = encrpyt();
-
-	// encrpyt() 결과를 파일로 저장
-	tee_store("encrpyted_string", encrypted_string);
 }
 
 // 파일로 저장

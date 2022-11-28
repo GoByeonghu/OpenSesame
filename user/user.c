@@ -1,4 +1,4 @@
-// 도어락 단 main
+// user단 메인 프로세스
 
 #include "user.h"
 #define MAX_IDPW_LENGTH 100
@@ -11,19 +11,29 @@ static void getUsrInfo(char *, char *);
 // [output]: nothing
 int main(int argc, char *argv[])
 {
+	int	status;
+
+	status = user_register();
+	if (!status) {
+		printf("프로그램을 종료합니다.");
+		exit(0);
+	}
 
 
-
+	return 0;
 }
 
-// [Name]: register_user()
+// [Name]: user_register()
 // [Function]: 사용자 회원가입 및 RSA 비대칭 키 생성
 // [input]: nothing
 // [output]: 상태 값(int)
-int register_user()
+int user_register()
 {
     char ID[100];
     char PW[100];
+
+    // 도어락 등록 모드인 경우
+    printf("===== 도어락 등록을 위한 사용자 ID와 PW를 입력해주세요 =====\n");
 
     // user info 입력 받음
     getUsrInfo(ID, PW);
@@ -53,8 +63,6 @@ int register_user()
 // [output]: nothing
 static void getUsrInfo(char *ID, char *PW)
 {
-    // todo: if 도어락 등록 모드인 경우
-    printf("===== 도어락 등록을 위한 사용자 ID와 PW를 입력해주세요 =====\n");
     printf("ID: ");
     if (!fgets(ID, MAX_IDPW_LENGTH, stdin))
     {

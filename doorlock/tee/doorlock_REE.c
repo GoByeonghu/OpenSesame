@@ -1,7 +1,7 @@
 // 도어락단 REE 프로세스
 #include "shm.h"
 
-int tee_userinfo(char *filename) {
+int tee_decrypt(char *filename, int flag) {
     char	*ptr;
 	int		shmid;
 	pid_t	pid;
@@ -27,7 +27,7 @@ int tee_userinfo(char *filename) {
 	// tee 프로세스
 	else if (pid == 0){
         // 복호화 및 무결성 검증 함수 호출
-		do_decrypt(filename);
+		do_decrypt(filename, flag);
         return 1;
 	}
 

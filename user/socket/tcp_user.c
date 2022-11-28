@@ -9,9 +9,8 @@
 #include <string.h>
 #include "tcp.h"
 
-// 파라미터 flag: 1(공개키), 2(암호문), 3(대칭키)
-
-int sendToDoorlock(int flag) {
+// 파라미터 flag: 1(공개키), 2(암호문), 3(대칭키), filename: 보낼 파일 명
+int sendToDoorlock(int flag, char *filename) {
 	int sockfd, n;
 	struct sockaddr_in servAddr;
 	FILE *file;
@@ -47,7 +46,7 @@ int sendToDoorlock(int flag) {
 		send(sockfd, sendFlag, 4, 0);
 		
 		// 공개키 파일 이름
-		file = fopen("public.pem", "rb");
+		file = fopen(filename, "rb");
 		fseek(file, 0, SEEK_END);
 		fsize = ftell(file);
 		fseek(file, 0, SEEK_SET);
@@ -86,7 +85,7 @@ int sendToDoorlock(int flag) {
 		send(sockfd, sendFlag, 4, 0);
 	
 		// do_encrypt() file 전송
-		file = fopen("encrpyted_string", "rb");
+		file = fopen(filename, "rb");
 		fseek(file, 0, SEEK_END);
 		fsize = ftell(file);
 		fseek(file, 0, SEEK_SET);
@@ -124,7 +123,7 @@ int sendToDoorlock(int flag) {
 		sendFlag = flag;
 		send(sockfd, sendFlag, 4, 0);
 	
-		file = fopen("SymmetricKey256.txt", "rb");
+		file = fopen(filename, "rb");
 		fseek(file, 0, SEEK_END);
 		fsize = ftell(file);
 		fseek(file, 0, SEEK_SET);

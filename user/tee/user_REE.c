@@ -8,7 +8,8 @@
 #include <sys/shm.h>
 #include "shm.h"
 
-int tee_getSymKey(){
+// 암호화
+int tee_encrypt(char *filename, int flag){
 	char	*ptr;
 	int		shmid;
 	pid_t	pid;
@@ -33,24 +34,25 @@ int tee_getSymKey(){
 	}
 	// tee 프로세스
 	else if (pid == 0){
-		genSymKey();
+		// 플래그도 같이 전송해서 어떤 걸 암호화 하는지
+		do_encrypt(filename, flag);
 	}
 
 	// 현재( == user)  프로세스
 	else {
 		waitpid(pid, &status, 0);
 
-		// genSymKey()가 성공했는지 아닌지 체크
+		// 암호화가 성공했는지 아닌지 체크
 		sprintf(msg, ptr);
 
 		// 성공했을 경우
 		if (msg) {
-			printf("대칭키 생성 성공\n");
+			printf("암호화 성공\n");
 		}
 
 		// 실패했을 경우
 		else {
-			printf("대칭키 생성 실패\n");
+			printf("암호화 실패\n");
 		}
 
 		// shared memory mapping 해제
@@ -67,6 +69,6 @@ int tee_getSymKey(){
 
 	}
 
-	return 0;
+	return 1;
 }
 
