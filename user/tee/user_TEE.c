@@ -13,20 +13,45 @@ void tee_store(char *, char *);
 
 // todo: encrpyt()
 char *encrpyt(int flag) {
-	char *encrpyted_string;
+	int				error;
+	unsigned char	*encrpyted_string;
+	unsigned char	*plaintext;
+	unsigned char	*private_key;
+	unsigned char	*sym_key;
 
 	// todo: 암호화 하기
+	private_key = tee_read("PrivateKey.pem");
 
-	// key 암호화
+	// key 암호화: 대칭키와 id 암호화 -> 개인키로 암호화
 	if (flag == 0) {
+		plaintext = tee_read("SymmetricKey256.txt");
+		// todo: id 추가하기
+		
+		// 개인키로 암호화
+		error = private_encrypt(plaintext, sizeof(plaintext), private_key, encrpyted_string);
 
+		// 해쉬 함수 
+		SHA256_Encode(encrpyted_string, encrpyted_string);
 	}
 
-	// 개폐 명령 암호화
-	else if (flag == 1) {
-	}
+	// 개폐 명령 암호화: 개폐 명령 + 인증서 -> 대칭키로 암호화
+	else {
+		// 열기 1, 닫기 2
+		// todo: 열고 닫기 가능하도록
+		if (flag == 1)
+			plaintext = "open";
+		else if (flag == 2)
+			plaintext = "close";
 
-	sprintf(encrpyted_string, "암호화된 문장");
+		// 해쉬 함수
+		SHA256_Encode(plaintext, encrpyted_string);
+
+		// 개인키로 암호화
+		error = private_encrypt(plaintext, sizeof(plaintext), private_key, encrpyted_string);
+
+		// 대칭키로 암호화
+		error = AES_Encrypt(plaintext, encrpyted_string);
+	}
 
 	return encrpyted_string;
 }

@@ -8,7 +8,7 @@
 #include <sys/shm.h>
 #include "shm.h"
 
-// 암호화
+// 암호화 (flag 0: key 암호문, flag1: 개폐명령 암호문)
 int tee_encrypt(char *filename, int flag){
 	char	*ptr;
 	int		shmid;

@@ -36,7 +36,6 @@ int main(int argc, char *argv[])
 		printf("프로그램을 종료합니다.");
 		exit(0);
 	}
-
 	// 암호문 전송
 	sendToDoorlock(2, "opencommand");
 
