@@ -14,6 +14,8 @@ BIO *publickey_bio = NULL;
 BIO *privatekey_bio = NULL; 
 BIO *stdout_bio = NULL;   
 
+int padding = RSA_PKCS1_PADDING;
+
 void closefiles();
 
 int openfiles(int isPEMFromat)
@@ -145,7 +147,37 @@ int makeRSAkey(int keyLen) {
     
     }
 }
+ 
+RSA * createRSA(unsigned char * key,int public)
+{
+    RSA *rsa= NULL;
+    BIO *keybio ;
+    keybio = BIO_new_mem_buf(key, -1); // 읽기 전용 메모리 만들기 BIO
+    if (keybio==NULL)
+    {
+        printf( "Failed to create key BIO");
+        return 0;
+    }
+    
+    /* PEM형식인 키 파일을 읽어와서 RSA 구조체 형식으로 변환 */
+    
+    if(public) // PEM public 키로 RSA 생성
+    {
+        rsa = PEM_read_bio_RSA_PUBKEY(keybio, &rsa, NULL, NULL);
+    }else // PEM private 키로 RSA 생성
+    {
+        rsa = PEM_read_bio_RSAPrivateKey(keybio, &rsa, NULL, NULL);
+    }
+    
+    if(rsa == NULL)
+    {
+        printf( "Failed to create RSA");
+    }
+ 
+    return rsa;
+}
 
+// 공개키로 암호화
 int public_encrypt(unsigned char * data,int data_len,unsigned char * key, unsigned char *encrypted) 
 {
     RSA * rsa = createRSA(key,1);
@@ -153,6 +185,7 @@ int public_encrypt(unsigned char * data,int data_len,unsigned char * key, unsign
     return result; // RSA_public_encrypt() returns the size of the encrypted data 
 }
 
+// 복호화 암호화
 int private_encrypt(unsigned char * data,int data_len,unsigned char * key, unsigned char *encrypted)
 {
     RSA * rsa = createRSA(key,0);

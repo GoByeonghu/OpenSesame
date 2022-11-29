@@ -13,20 +13,26 @@ void tee_store(char *, char *);
 
 // todo: encrpyt()
 char *encrpyt(int flag) {
-	char *encrpyted_string;
+	unsigned char	*encrpyted_string;
+	unsigned char	*plaintext;
 
 	// todo: 암호화 하기
 
-	// key 암호화
+	// key 암호화: 대칭키와 id 암호화 -> 개인키로 암호화
 	if (flag == 0) {
+		plaintext = tee_read("SymmetricKey256.txt");
+		// AES_Encrypt("test", encrpyted_string);
 
+		// 해쉬 함수 
+		SHA256_Encode(encrpyted_string, encrpyted_string);
 	}
 
-	// 개폐 명령 암호화
+	// 개폐 명령 암호화: 개폐 명령 + 인증서 -> 대칭키로 암호화
 	else if (flag == 1) {
+		
 	}
 
-	sprintf(encrpyted_string, "암호화된 문장");
+	//sprintf(encrpyted_string, "암호화된 문장");
 
 	return encrpyted_string;
 }
