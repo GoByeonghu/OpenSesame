@@ -77,14 +77,14 @@ int sendToDoorlock(int flag, char *filename) {
 		close(sockfd);
 	}
 
-	// do_encrypt() 결과 파일 보내는 경우
+	// 암호문 결과 파일 보내는 경우
 	else if (flag == SEND_ENCRYPTFILE) {
 		printf("===== 암호문 전송을 시작합니다... =====\n");
 		// 플래그 2을 먼저 보냄
 		sendFlag = flag;
 		send(sockfd, sendFlag, 4, 0);
 	
-		// do_encrypt() file 전송
+		// 암호문 file 전송
 		file = fopen(filename, "rb");
 		fseek(file, 0, SEEK_END);
 		fsize = ftell(file);
