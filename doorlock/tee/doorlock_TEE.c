@@ -2,23 +2,33 @@
 #include "shm.h"
 
 // todo: 무결섬 검증, 복호화, 파일로 결과 저장 (tee_store 호출)
-int decrpyt(int flag) {
-	// todo: 복호화 하기
+int decrpyt(unsigned char *buf, int flag, char *filename) {
+	int				status;
+	unsigned char	decrpyted[1000000];
 
-	// key 복호화
+	status = 1;
+	// 공개키로 복호화
 	if (flag == 0) {
+		unsigned char *key;
+		key = tee_read("PublicKey.pem");
 
+		// 공개키로 복호화
+		status = public_decrypt(buf, sizeof(buf), key, decrpyted);
+
+		// 저장
+		tee_store(filename, decrpyted);
 	}
 
-	// 개폐 명령 복호화
+	// 대칭키로 복호화
 	else if (flag == 1) {
+		status = AES_Decrypt(buf, decrpyted);
+		tee_store(filename, decrpyted);
 	}
 
-    return 1; // 성공 시 1, 실패 시 0
+    return status; // 성공 시 1, 실패 시 0
 }
 
-//
-void do_decrypt(char *filename, int flag) {
+void do_decrypt(char *filename, int flag, char *decryptedfile) {
 	char			*ptr;
 	int 			shmid;
 	int 			error;  // 복호화 에러 표시
@@ -39,7 +49,7 @@ void do_decrypt(char *filename, int flag) {
 	buf = tee_read(filename);
 
 	// 복호화 진행
-	error = decrpyt(flag);
+	error = decrpyt(buf, flag, decryptedfile);
 
 	char *pData=ptr;
 	// 복호화가 오류난 경우: shared memory에 0 씀
@@ -57,7 +67,7 @@ void do_decrypt(char *filename, int flag) {
 }
 
 // 파일로 저장
-void tee_store(char *filename, char *data) {
+void tee_store(char *filename, unsigned char *data) {
 	FILE	*file;
 	char	*pt;
 
@@ -73,8 +83,8 @@ void tee_store(char *filename, char *data) {
 
 // 파일 읽기
 unsigned char *tee_read(char *filename) {
-   FILE *file;
-   unsigned char buf[100000];
+   FILE				*file;
+   unsigned char	buf[100000];
 
    file = fopen(filename, "r");
    fseek(file, 0, SEEK_SET);

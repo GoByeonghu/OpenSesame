@@ -9,7 +9,7 @@
 #include <string.h>
 #include "tcp.h"
 
-// 파라미터 flag: 1(공개키), 2(암호문), 3(대칭키), filename: 보낼 파일 명
+// 파라미터 flag: 1(공개키), 2(암호문), 3(파일), filename: 보낼 파일 명
 int sendToDoorlock(int flag, char *filename) {
 	int sockfd, n;
 	struct sockaddr_in servAddr;
@@ -44,7 +44,7 @@ int sendToDoorlock(int flag, char *filename) {
 		// 플래그 1을 먼저 보냄
 		sendFlag = flag;
 		send(sockfd, sendFlag, 4, 0);
-		
+
 		// 공개키 파일 이름
 		file = fopen(filename, "rb");
 		fseek(file, 0, SEEK_END);
@@ -116,9 +116,9 @@ int sendToDoorlock(int flag, char *filename) {
 
 	}
 
-	// 대칭키 파일 보내는 경우
-	else if (flag == SEND_SYMKEY) {
-		printf("===== 대칭키 전송을 시작합니다... =====\n");
+	// 파일 보내는 경우
+	else if (flag == SEND_FILE) {
+		printf("===== 파일 전송을 시작합니다... =====\n");
 		// 플래그 3을 먼저 보냄
 		sendFlag = flag;
 		send(sockfd, sendFlag, 4, 0);
@@ -143,11 +143,11 @@ int sendToDoorlock(int flag, char *filename) {
 		
 		// 전송 성공한 경우
 		if (msg.type) {
-			printf("대칭키 전송 성공\n");
+			printf("파일 전송 성공\n");
 		}
 		// 전송 실패한 경우
 		else {
-			printf("대칭키 전송 실패\n");
+			printf("파일 전송 실패\n");
 		}
 		
 		close(sockfd); 

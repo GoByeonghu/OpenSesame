@@ -5,12 +5,12 @@
 #define MSG_FAIL	0
 
 // 플래그 1: 공개키
-// 플래그 2: do_encrpyt() 결과 파일
-// 플래그 3: 대칭키 파일
+// 플래그 2: 암호문
+// 플래그 3: 파일
 
 #define SEND_PUBLICKEY		1
 #define SEND_ENCRYPTFILE	2
-#define SEND_SYMKEY			3
+#define SEND_FILE			3
 
 // 도어락 고유번호
 #define DOORLOCK "1234567890"

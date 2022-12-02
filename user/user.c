@@ -29,6 +29,7 @@ int main(int argc, char *argv[])
 
 	// 암호문 전송
 	sendToDoorlock(2, "encrpyted_string");
+	sendToDoorlock(3, "ID");
 
 	/* 3. 개폐 명령 */
 	// 사용자 로그인하고 개폐 명령 입력
