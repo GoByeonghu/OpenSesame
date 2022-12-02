@@ -6,11 +6,11 @@
 
 // 플래그 1: 공개키
 // 플래그 2: do_encrpyt() 결과 파일
-// 플래그 3: 대칭키 파일
+// 플래그 3: 파일 전송
 
 #define SEND_PUBLICKEY		1
 #define SEND_ENCRYPTFILE	2
-#define SEND_SYMKEY			3
+#define SEND_FILE			3
 
 typedef struct {
 	int		type;		// 수신 상태 메세지 (1 ok, 0 fail)

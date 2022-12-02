@@ -98,6 +98,7 @@ void recvFromUser(char *filename, int fileFlag)
 		fclose(file);
 
 		msg.type = MSG_OK;
+		// 도어락 시리얼 번호 전송
 		sprintf(msg.data, DOORLOCK);
 
 		// 연결된 client socket descriptor로 reply를 보냄
@@ -145,7 +146,7 @@ void recvFromUser(char *filename, int fileFlag)
 		close(newSockfd);
 	}
 
-	// 대칭키 수신하는 경우 (flag == 3)
+	// 파일 수신하는 경우 (flag == 3)
 	else {
 		file = fopen(filename, "wb");
 		int nbyte = 256;

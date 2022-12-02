@@ -9,11 +9,14 @@
 int main(int argc, char *argv[])
 {
     /* 1. 도어락 등록 */
-    // 공개키 수신 (flag는 대충 넣었습니다... 쓰이진 않아요)
+    // 공개키 수신 (flag 역할 없음)
     recvFromUser("PublicKey.pem", 0);
 
     // key 암호문 수신
     recvFromUser("encrpyted_string", 0);
+
+    // ID 수신 (flag 역할 없음))
+    recvFromUser("ID", 0);
 
     /* 2. 도어락 개폐 수행 */
     // 개폐 명령 암호문 수신
