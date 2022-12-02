@@ -10,8 +10,10 @@
 typedef unsigned char uchar;
 typedef unsigned int uint;
 
-//generate key pair
-void generateKeys(){
+//func: Generate key pair(RSA public key, RSA private key) and store to file
+//pre: None
+//post: Create public.txt and private.txt, (both in pem format) 
+void RSA_generateKeys(){
     EVP_PKEY*pkey=EVP_RSA_gen(1024);
     if(pkey==NULL){
         fprintf(stderr,"error: rsa gen\n");
@@ -35,54 +37,48 @@ void generateKeys(){
     EVP_PKEY_free(pkey);
 }
 
-void RSA_GetPublicKey(){
-    FILE*fp=fopen("public.txt","r");
-    if(fp==NULL){
-        perror("file error");
-        return NULL;
+//func: Get RSA public key
+//pre: public.txt must exist.
+//post: The public key is stored in the parameter
+int RSA_GetPublicKey(char *read_buf){
+    FILE* fp = NULL;
+    fp = fopen("public.txt", "r");
+    if (fp == NULL)
+    {
+        printf("open error1\n");
+        return 0;
     }
-    EVP_PKEY*pkey;
-    pkey=PEM_read_PUBKEY(fp,NULL,NULL,NULL);
+    fread(read_buf, sizeof(char), 4096, fp);
+ 
+    printf("[실행결과]\n%s\n", read_buf);
     fclose(fp);
-
+    return 1;
 }
 
-uchar*encrypt(uchar*src,uint len,uchar*dst,int*length){
-    FILE*fp=fopen("public.txt","r");
-    if(fp==NULL){
-        perror("file error");
-        return NULL;
+//func: Set RSA public key
+//pre: None
+//post: The public key is stored in the parameter
+int RSA_SetPublicKey(char *read_buf){
+    FILE* fp = NULL;
+    ////////////////////////////////////////////////////////////////
+    fp = fopen("coppy.txt", "w");//////////Nedd to switch public.txt
+    ////////////////////////////////////////////////////////////////
+    if (fp == NULL)
+    {
+        printf("open error2\n");
+        return 0;
     }
-    EVP_PKEY*pkey;
-    pkey=PEM_read_PUBKEY(fp,NULL,NULL,NULL);
+    fwrite(read_buf, sizeof(char), strlen(read_buf),fp);
     fclose(fp);
-    if(pkey==NULL){
-        fprintf(stderr,"error: read publics key\n");
-        return NULL;
-    }
-    EVP_PKEY_CTX*ctx=EVP_PKEY_CTX_new(pkey,NULL);
-    EVP_PKEY_encrypt_init(ctx);
-    //uchar*dst=(uchar*)malloc(2048);
-    size_t outl;
-    if(!EVP_PKEY_encrypt(ctx,dst,&outl,src,(size_t)len)){
-        fprintf(stderr,"error: encrypt\n");
-        EVP_PKEY_free(pkey);
-        //free(dst);
-        return NULL;
-    }
-    int len2=outl;
-    EVP_PKEY_free(pkey);
-    EVP_PKEY_CTX_free(ctx);
-    //BIO_dump_fp(stdout,dst,len2);
-    //printf("len: %d, len2: %d\n",len,len2);
-    if(length!=NULL){
-    	*length=len2;
-    }
-    return dst;
+    return 1;
 }
 
 
-uchar*decrypt(uchar*src,int len, uchar*dst, int* length){
+
+//func: RSA encryption
+//pre: The target string must not be too long.
+//post: src is encrypted and stored as dst with a length of length.
+uchar*RSA_encrypt(uchar*src,uint len,uchar*dst,int*length){
     FILE*fp=fopen("private.txt","r");
     if(fp==NULL){
         perror("file error");
@@ -95,8 +91,41 @@ uchar*decrypt(uchar*src,int len, uchar*dst, int* length){
         return NULL;
     }
     EVP_PKEY_CTX*ctx=EVP_PKEY_CTX_new(pkey,NULL);
+    EVP_PKEY_encrypt_init(ctx);
+    size_t outl;
+    if(!EVP_PKEY_encrypt(ctx,dst,&outl,src,(size_t)len)){
+        fprintf(stderr,"error: encrypt\n");
+        EVP_PKEY_free(pkey);
+        return NULL;
+    }
+    int len2=outl;
+    EVP_PKEY_free(pkey);
+    EVP_PKEY_CTX_free(ctx);
+    if(length!=NULL){
+    	*length=len2;
+    }
+    return dst;
+}
+
+//func: RSA decryption
+//pre: dst must be a uchar of length 4096.
+//post: src is decrypted and stored as dst with a length of length.
+uchar*RSA_decrypt(uchar*src,int len, uchar*dst, int* length){
+    FILE*fp=fopen("public.txt","r");
+    if(fp==NULL){
+        perror("file error");
+        return NULL;
+    }
+    EVP_PKEY*pkey;
+    pkey=PEM_read_PUBKEY(fp,NULL,NULL,NULL);
+    fclose(fp);
+
+    if(pkey==NULL){
+        fprintf(stderr,"error: read public key\n");
+        return NULL;
+    }
+    EVP_PKEY_CTX*ctx=EVP_PKEY_CTX_new(pkey,NULL);
     EVP_PKEY_decrypt_init(ctx);
-    //uchar*dst=(uchar*)malloc(2048);
     size_t outl=2048;
     size_t inl=len;
     if(!EVP_PKEY_decrypt(ctx,dst,&outl,src,inl)){
@@ -105,11 +134,6 @@ uchar*decrypt(uchar*src,int len, uchar*dst, int* length){
         dst=NULL;
     }else{
 	*length=outl;
-	/*
-        BIO_dump_fp(stdout,dst,(int)outl);
-        //printf("len: %d, outl: %lld\n",len,outl);
-	printf("len: %d, outl: %ld\n",len,outl);
-        */
     }
     EVP_PKEY_free(pkey);
     EVP_PKEY_CTX_free(ctx);
@@ -118,38 +142,44 @@ uchar*decrypt(uchar*src,int len, uchar*dst, int* length){
 
 
 //for test
+//This provides an example of using the function.
+//In fact, when adding this file, it is necessary to comment out or delete it.
 int main(){
  
- generateKeys();
+ //initialization 
+ RSA_generateKeys();
  uchar *src= "hiimgbh";
  uchar*dst=(uchar*)malloc(2048);
  uint len=8;
- 
- /*
- int *length=(int*)malloc(sizeof(int));
- encrypt(src,len,dst,length);
- BIO_dump_fp(stdout,dst,*length);
- printf("len: %d, len2: %d\n",len,*length);
-  */
- 
+  
  //encryption
  int length;
- encrypt(src,len,dst,&length);
+ RSA_encrypt(src,len,dst,&length);
  BIO_dump_fp(stdout,dst,length);
  printf("len: %d, len2: %d\n",len,length);
 
-// decryption
-uchar*rst=(uchar*)malloc(2048);
-int dlength; 
-decrypt(dst,length,rst,&dlength);
+ // decryption
+ uchar*rst=(uchar*)malloc(2048);
+ int dlength; 
+ RSA_decrypt(dst,length,rst,&dlength);
  BIO_dump_fp(stdout,rst,dlength);
- //printf("len: %d, outl: %lld\n",len,outl);
  printf("len: %d, outl: %d\n",length,dlength);
+
+ //Key Get&Set
+ int BUF_SIZE = 4096;
+ char*read_buf=(char*)malloc(BUF_SIZE);
+ RSA_GetPublicKey(read_buf);
+ RSA_SetPublicKey(read_buf);
+
+ //deallocate
+ free(dst);
 
  return 0;
 
 }
 
+//This is the source code for the old version of openssl (not applicable after openssl 3.0).
+//Will be deleted in the future.
 /*
 #include "user.h"
 
