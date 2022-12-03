@@ -35,6 +35,7 @@ int tee_encrypt(char *filename, int flag){
 	// tee 프로세스
 	else if (pid == 0){
 		// 플래그도 같이 전송해서 어떤 걸 암호화 하는지
+		// filename: close, flag: 1
 		do_encrypt(filename, flag);
 	}
 

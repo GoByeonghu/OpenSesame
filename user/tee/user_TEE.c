@@ -9,46 +9,35 @@
 #include <string.h>
 #include "shm.h"
 
-void tee_store(char *, char *);
+void			tee_store(char *, char *);
+unsigned char	*tee_read(char *filename);
 
 // todo: encrpyt()
-char *encrpyt(int flag) {
+char *encrpyt(int flag, char *filename) {
 	int				error;
 	unsigned char	*encrpyted_string;
 	unsigned char	*plaintext;
 	unsigned char	*private_key;
 	unsigned char	*sym_key;
 
-	// todo: 암호화 하기
 	private_key = tee_read("PrivateKey.pem");
 
-	// key 암호화: 대칭키와 id 암호화 -> 개인키로 암호화
+	// flag:0 == 개인키로 암호화
 	if (flag == 0) {
-		plaintext = tee_read("SymmetricKey256.txt");
-		// todo: id 추가하기
-		
+		if (filename == "open" || filename == "close") {
+			plaintext = filename;
+		}
+		else {
+			plaintext = tee_read("SymmetricKey256.txt");
+		}
+
 		// 개인키로 암호화
 		error = private_encrypt(plaintext, sizeof(plaintext), private_key, encrpyted_string);
-
-		// 해쉬 함수 
-		SHA256_Encode(encrpyted_string, encrpyted_string);
 	}
 
-	// 개폐 명령 암호화: 개폐 명령 + 인증서 -> 대칭키로 암호화
+	// flag:1 == 대칭키로 암호화
 	else {
-		// 열기 1, 닫기 2
-		// todo: 열고 닫기 가능하도록
-		if (flag == 1)
-			plaintext = "open";
-		else if (flag == 2)
-			plaintext = "close";
-
-		// 해쉬 함수
-		SHA256_Encode(plaintext, encrpyted_string);
-
-		// 개인키로 암호화
-		error = private_encrypt(plaintext, sizeof(plaintext), private_key, encrpyted_string);
-
+		plaintext = filename;
 		// 대칭키로 암호화
 		error = AES_Encrypt(plaintext, encrpyted_string);
 	}
@@ -61,6 +50,7 @@ void do_encrypt(char *filename, int flag) {
 	FILE	*file;
 	char	*ptr;
 	char	*encrypted_string;
+	char	*target_string;
 	int		shmid;
 	int		error;  // 대칭키 에러 표시
 
@@ -85,19 +75,29 @@ void do_encrypt(char *filename, int flag) {
 	}
 
 	char *pData=ptr;
-	// 대칭키 생성이 오류난 경우: shared memory에 0 씀
-	if (error) 
+	// 오류난 경우: shared memory에 0 씀
+	if (error)
 		sprintf(pData, 0);
 
-	// 대칭키 생성이 성공인 경우: shared memory에 1 씀
+	// 성공인 경우: shared memory에 1 씀
 	else {
 		sprintf(pData, 1);
 
-		// 대칭키 생성이 성공하면 암호화 호출
-		encrypted_string = encrpyt(flag);
+		// 대칭키 암호화
+		if (flag == 0) {
+			encrypted_string = encrpyt(0, target_string);
+			tee_store(filename, encrypted_string);
+		}
 
-		// encrpyt() 결과를 파일로 저장
-		tee_store(filename, encrypted_string);
+		// 개폐 명령 암호화
+		else if (flag == 1) {
+			error = SHA256_Encode(filename, target_string);
+			encrypted_string = encrpyt(0, target_string);
+			tee_store("opencommand_privatekey", encrypted_string);
+
+			encrypted_string = encrpyt(1, filename);
+			tee_store("opencommand_symkey", encrypted_string);
+		}
 	}
 
 	// shared memory mapping 해제

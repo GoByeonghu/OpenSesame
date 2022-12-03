@@ -28,17 +28,24 @@ int main(int argc, char *argv[])
 	tee_encrypt("encrpyted_string", 0);
 
 	// 암호문 전송
+	sleep(3000);
 	sendToDoorlock(2, "encrpyted_string");
+	sleep(3000);
 	sendToDoorlock(3, "ID");
 
 	/* 3. 개폐 명령 */
-	// 사용자 로그인하고 개폐 명령 입력
+	// 사용자 로그인하고 개폐 명령 입력한 뒤 암호화 진행까지
 	if (!tee_control()) {
 		printf("프로그램을 종료합니다.");
 		exit(0);
 	}
-	// 암호문 전송
-	sendToDoorlock(2, "opencommand");
+	sleep(3000);
+
+	// hash + 개인키 암호화
+	sendToDoorlock(2, "opencommand_symkey");
+	sleep(3000);
+	// 대칭키로 암호화
+	sendToDoorlock(2, "opencommand_privatekey");
 
 	return 0;
 }
@@ -120,18 +127,22 @@ int tee_control() {
 			perror("명령어 입력이 잘못되었습니다.\n");
 			return 0; // fail
 		}
-		
-		if (choice[0] == 'y' || choice[0] == 'Y')
-		{
-			getUsrInfo(ID, PW);
-		}
+
+		getUsrInfo(ID, PW);
 
 		// todo: 유저 인증
 		// 그냥 ok라고 하기
 
 		// 개폐 명령 암호화(flag: 1)
-		tee_encrypt("opencommand", 1);
-
+		if (choice[0] == "Y" || choice[0] == "y") {
+			tee_encrypt("open", 1);
+		}
+		else if (choice[0] == "n" || choice[0] == "N") {
+			tee_encrypt("close", 1);
+		}
+		else {
+			printf("잘못된 명령입니다.\n");
+		}
 	}
 
 	// success
