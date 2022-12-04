@@ -20,14 +20,14 @@ void RSA_generateKeys(){
         ERR_print_errors_fp(stderr);
         return;
     }
-    FILE*fp=fopen("public.txt","wt");
+    FILE*fp=fopen("PublicKey.pem","wt");
     if(fp!=NULL){
         PEM_write_PUBKEY(fp,pkey);
         fclose(fp);
     }else{
         perror("file error");
     }
-    fp=fopen("private.txt","wt");
+    fp=fopen("PrivateKey.pem","wt");
     if(fp!=NULL){
         PEM_write_PrivateKey(fp,pkey,NULL,NULL,0,NULL,NULL);
         fclose(fp);
@@ -42,7 +42,7 @@ void RSA_generateKeys(){
 //post: The public key is stored in the parameter
 int RSA_GetPublicKey(char *read_buf){
     FILE* fp = NULL;
-    fp = fopen("public.txt", "r");
+    fp = fopen("PublicKey.pem", "r");
     if (fp == NULL)
     {
         printf("open error1\n");
@@ -60,9 +60,7 @@ int RSA_GetPublicKey(char *read_buf){
 //post: The public key is stored in the parameter
 int RSA_SetPublicKey(char *read_buf){
     FILE* fp = NULL;
-    ////////////////////////////////////////////////////////////////
-    fp = fopen("coppy.txt", "w");//////////Nedd to switch public.txt
-    ////////////////////////////////////////////////////////////////
+    fp = fopen("PublicKey.pem", "w");
     if (fp == NULL)
     {
         printf("open error2\n");
@@ -73,13 +71,11 @@ int RSA_SetPublicKey(char *read_buf){
     return 1;
 }
 
-
-
 //func: RSA encryption
 //pre: The target string must not be too long.
 //post: src is encrypted and stored as dst with a length of length.
 uchar*RSA_encrypt(uchar*src,uint len,uchar*dst,int*length){
-    FILE*fp=fopen("private.txt","r");
+    FILE*fp=fopen("PrivateKey.pem","r");
     if(fp==NULL){
         perror("file error");
         return NULL;
@@ -111,7 +107,7 @@ uchar*RSA_encrypt(uchar*src,uint len,uchar*dst,int*length){
 //pre: dst must be a uchar of length 4096.
 //post: src is decrypted and stored as dst with a length of length.
 uchar*RSA_decrypt(uchar*src,int len, uchar*dst, int* length){
-    FILE*fp=fopen("public.txt","r");
+    FILE*fp=fopen("PublicKey.pem","r");
     if(fp==NULL){
         perror("file error");
         return NULL;

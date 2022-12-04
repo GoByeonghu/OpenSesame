@@ -139,9 +139,9 @@ int AES_SetKey(unsigned char *key){
    for(int i=0; i<KEY_LENGTH; i++){
            buffer[i]=key[i];
    }
-   buffer[KEY_LENGTH] = '\0';/////////////////////////////////////////
-   fp = fopen("SymmetricKey256copy.txt", "w");/////////////Need to fix
-   /* A 256 bit key */       /////////////////////////////////////////
+   buffer[KEY_LENGTH] = '\0';
+   fp = fopen("SymmetricKey256.txt", "w");
+   /* A 256 bit key */       
    /// this is still a 256-bit (32 byte) key
    fputs(buffer, fp);
    fclose(fp);

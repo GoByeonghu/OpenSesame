@@ -15,12 +15,14 @@ unsigned char	*tee_read(char *filename);
 // todo: encrpyt()
 char *encrpyt(int flag, char *filename) {
 	int				error;
-	unsigned char	*encrpyted_string;
+	unsigned char	*encrpyted_string=(uchar*)malloc(2048);
+	int encrypted_length;
 	unsigned char	*plaintext;
 	unsigned char	*private_key;
 	unsigned char	*sym_key;
 
-	private_key = tee_read("PrivateKey.pem");
+	// todo: 암호화 하기
+	//private_key = tee_read("PrivateKey.pem");
 
 	// flag:0 == 개인키로 암호화
 	if (flag == 0) {
@@ -32,7 +34,24 @@ char *encrpyt(int flag, char *filename) {
 		}
 
 		// 개인키로 암호화
-		error = private_encrypt(plaintext, sizeof(plaintext), private_key, encrpyted_string);
+		private_encrypt(plaintext, sizeof(plaintext), private_key, encrpyted_string);
+
+		//error = private_encrypt(plaintext, sizeof(plaintext), private_key, encrpyted_string);
+		unsigned char temp_string=(uchar*)malloc(2048);
+		RSA_encrypt(plaintext,sizeof(plaintext),temp_string,&encrypted_length);
+		unsigned char Length_flag = "LE";
+		unsigned char *length_string = (uchar*)malloc(4);
+		sprintf(length_string, "%d", encrypted_length);
+		
+		strcat(encrpyted_string,length_string);
+		strcat(encrpyted_string, Length_flag);
+		int j =strlen(encrpyted_string)
+		for(int i=0; i<encrypted_length; i++){
+			encryped_string[j]=temp_string[i];
+			j++;		
+		}
+
+		
 	}
 
 	// flag:1 == 대칭키로 암호화

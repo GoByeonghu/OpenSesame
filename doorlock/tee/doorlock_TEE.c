@@ -1,6 +1,16 @@
 // 도어락단 TEE 프로세스
 #include "shm.h"
 
+//func: String to int
+int my_atoi(const char* str) {
+	int ret = 0;
+	int i;
+	for (i = 0; str[i] != '\0'; i++)	//NULL문자만나면 for문 종료
+		ret = ret * 10 + (str[i] - '0');	//숫자 문자에 '0'을 빼면 레알 숫자가 구해짐
+	return ret;
+}
+
+
 // todo: 무결섬 검증, 복호화, 파일로 결과 저장 (tee_store 호출)
 int decrpyt(unsigned char *buf, int flag, char *filename) {
 	int				status;
@@ -9,11 +19,28 @@ int decrpyt(unsigned char *buf, int flag, char *filename) {
 	status = 1;
 	// 공개키로 복호화
 	if (flag == 0) {
-		unsigned char *key;
-		key = tee_read("PublicKey.pem");
+		int len;
+		int decrypted_length;
+		unsigned char *len_string=(unsigned char*)malloc(4);
+		unsigned char *target_string=(unsigned char*)malloc(2048);
+		int k =0;
+		for(int i=0; i<sizeof(buf)-2; i++){
+			len_string[i]=buf[i];
+			if(buf[i]=='L'){
+				if(buf[i+1]='E'){
+				len_string[i]='\0';
+				k=0;
+				}
+			}
+			target_string[k]=buf[i+2];
+			k++;
+		}
+		len = my_atoi(len_string);
 
 		// 공개키로 복호화
-		status = public_decrypt(buf, sizeof(buf), key, decrpyted);
+		//status = public_decrypt(buf, sizeof(buf), key, decrpyted);
+		RSA_decrypt(target_string,len, decrpyted, &decrypted_length);
+		decrpyted[decrypted_length]='\0';
 
 		// 저장
 		tee_store(filename, decrpyted);
