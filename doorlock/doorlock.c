@@ -23,19 +23,40 @@ int main(int argc, char *argv[])
     recvFromUser("opencommand", 1);
 
     // 명목상 문 열기
-    int flag = 1;
-    openSesame(flag);
+    openSesame();
+
 }
 
 // [Name]: openSesame
 // [Function]: 문 개폐 제어
-// [input]: int flag (1: 열림, 0: 닫힘)
+// [input]: nothing
 // [output]: nothing
-void openSesame(int flag) {
-    if (flag == 1) {
-        printf("===== 문이 열렸습니다. =====");
+void openSesame() {
+    unsigned char   *buf;
+    unsigned char   *command;
+    unsigned char   *hashfile;
+
+    hashfile = tee_read("opencommand_privatekey");
+    buf = tee_read("opencommand_symkey");
+    command = buf;
+    SHA256_Encode(buf, buf);
+
+    if (strcmp(buf, hashfile) == 0) {
+        printf("인증되었습니다.\n");
     }
-    else if (flag == 0) {
-        printf("====== 문이 닫혔습니다. =====");
+
+    else {
+        printf("인증이 실패하였습니다.\n");
+        return;
+    }
+    
+    if (strcmp(command, "open") == 0) {
+        printf("===== 문이 열렸습니다. =====\n");
+    }
+    else if (strcmp(command, "close") == 0) {
+        printf("====== 문이 닫혔습니다. =====\n");
+    }
+    else {
+        printf("===== 유효한 명령이 아닙니다. =====\n");
     }
 }

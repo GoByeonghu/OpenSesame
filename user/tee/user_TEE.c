@@ -91,12 +91,9 @@ void do_encrypt(char *filename, int flag) {
 
 		// 개폐 명령 암호화
 		else if (flag == 1) {
-			error = SHA256_Encode(filename, target_string);
-			encrypted_string = encrpyt(0, target_string);
-			tee_store("opencommand_privatekey", encrypted_string);
-
+			// 개폐 명령 암호화 부분은 이 부분 바꾸시면 될듯합니다
 			encrypted_string = encrpyt(1, filename);
-			tee_store("opencommand_symkey", encrypted_string);
+			tee_store("opencommand", encrypted_string);
 		}
 	}
 

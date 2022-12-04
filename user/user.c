@@ -41,11 +41,9 @@ int main(int argc, char *argv[])
 	}
 	sleep(3000);
 
-	// hash + 개인키 암호화
-	sendToDoorlock(2, "opencommand_symkey");
+	// 개폐명령 암호화 파일 전송
+	sendToDoorlock(2, "opencommand");
 	sleep(3000);
-	// 대칭키로 암호화
-	sendToDoorlock(2, "opencommand_privatekey");
 
 	return 0;
 }
