@@ -44,12 +44,55 @@ int decrpyt(unsigned char *buf, int flag, char *filename) {
 
 		// 저장
 		tee_store(filename, decrpyted);
+		status=1;
 	}
 
 	// 대칭키로 복호화
 	else if (flag == 1) {
-		status = AES_Decrypt(buf, decrpyted);
+		//get certification
+		int cer_len;
+                int cer_decrypted_length;
+                unsigned char *len_string=(unsigned char*)malloc(4);
+                unsigned char *cer_string=(unsigned char*)malloc(1024);
+		unsigned char *cer_target_string=(unsigned char*)malloc(1024);
+                int k =0;
+		int observer_start=0;
+		int observer_end=0;
+                for(int i=0; i<sizeof(buf)-2; i++){
+                        len_string[i]=buf[i];
+                        if(buf[i]=='L'){
+                                if(buf[i+1]='E'){
+                                len_string[i]='\0';
+                                k=0;
+                                }
+                        }
+			if(buf[i]=='M'){
+                                if(buf[i+1]='D'){
+                                observer_start=i+2;
+                                }
+                        }
+
+                        cer_target_string[k]=buf[i+2];
+                        k++;
+                }
+		
+		//remove crypto
+		for(int i=observer_start-2; i<sizeof(cer_target_string); i++){
+			cer_target_string[i] = '\0'
+		}
+
+                cer_len = my_atoi(len_string);
+
+                // 공개키로 복호화
+		unsigned char certification=(uchar*)malloc(2048);
+                RSA_decrypt(cer_target_string,cer_len, certification, &cer_len);
+		
+		
+		//to do: check certification
+
+		AES_Decrypt(buf+observer_start, decrpyted);
 		tee_store(filename, decrpyted);
+		status =1;
 	}
 
     return status; // 성공 시 1, 실패 시 0

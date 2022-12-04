@@ -57,8 +57,33 @@ char *encrpyt(int flag, char *filename) {
 	// flag:1 == 대칭키로 암호화
 	else {
 		plaintext = filename;
-		// 대칭키로 암호화
-		error = AES_Encrypt(plaintext, encrpyted_string);
+		
+		//make message digest
+		char MD[SHA256_DIGEST_LENGTH*2+1];
+		SHA256_Encode(plaintext, MD);
+		
+		//make certification
+		int cer_length;
+		unsigned char *certification = (unsigned char*)malloc(2048);
+		RSA_encrypt(MD,strlen(MD),certification,cer_length);
+		unsigned char Length_flag = "LE";
+                unsigned char *length_string = (uchar*)malloc(4);
+                sprintf(length_string, "%d", cer_length);
+
+		strcat(encrpyted_string,length_string);
+                strcat(encrpyted_string, Length_flag);
+                int temp_length =strlen(encrpyted_string)
+                for(int i=0; i<cer_length; i++){
+                        encryped_string[j]=temp_string[i];
+                        j++;
+                }
+		encryped_string[temp_length++]='M';
+		encryped_string[temp_length++]='D';
+		
+		// 대칭키로 암호
+                AES_Encrypt(plaintext, encryped_string+temp_length);
+		
+		
 	}
 
 	return encrpyted_string;
