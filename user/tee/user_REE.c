@@ -7,7 +7,8 @@ int tee_encrypt(char *filename, int flag){
 	int		shmid;
 	pid_t	pid;
 	int		status;
-	int		msg;
+	//int		msg;
+	char msg[2];
 
 	// SHM_KEY로 shared memory를 생성하고 id를 shmid에 저장함
 	if((shmid=shmget(SHM_KEY,SHM_SIZE,SHM_MODE))<0){
@@ -41,7 +42,7 @@ int tee_encrypt(char *filename, int flag){
 		sprintf(msg, "%s", ptr);
 
 		// 성공했을 경우
-		if (msg) {
+		if (msg[0]=='1') {
 			printf("암호화 성공\n");
 		}
 

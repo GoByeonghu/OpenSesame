@@ -7,7 +7,9 @@
 
 #define MAX_IDPW_LENGTH 100
 
+int user_register();
 static void getUsrInfo(char *, char *);                
+int tee_control();
 
 // [Name]: main()
 // [Function]: entry point

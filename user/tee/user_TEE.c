@@ -109,11 +109,11 @@ void do_encrypt(char *filename, int flag) {
 	char *pData=ptr;
 	// 오류난 경우: shared memory에 0 씀
 	if (error)
-		sprintf(pData, 0);
+		sprintf(pData, "0");
 
 	// 성공인 경우: shared memory에 1 씀
 	else {
-		sprintf(pData, 1);
+		sprintf(pData, "1");
 
 		// 대칭키 암호화
 		if (flag == 0) {
