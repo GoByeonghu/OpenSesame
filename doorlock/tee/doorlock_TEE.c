@@ -1,5 +1,8 @@
 // 도어락단 TEE 프로세스
 #include "shm.h"
+#include "./../aes.h"
+#include "./../rsa.h"
+#include "./../sha256.h"
 
 //func: String to int
 int my_atoi(const char* str) {

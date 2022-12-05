@@ -245,9 +245,11 @@ int AES_Decrypt(unsigned char *target, unsigned char *result){
 	return 0;
 }
 
+
 //for test
 //This provides an example of using the function.
 //In fact, when adding this file, it is necessary to comment out or delete it.
+/*
 int main(int arc, char *argv[])
 {
   //Get & Set key
@@ -259,7 +261,7 @@ int main(int arc, char *argv[])
   AES_SetKey(temp_key);
    
   //Initialization
-   /* A 256 bit key */
+   //A 256 bit key
    /// this is still a 256-bit (32 byte) key
   unsigned char key[KEY_LENGTH+1];
   AES_GetKey(key);
@@ -284,6 +286,8 @@ int main(int arc, char *argv[])
   
   return 0;
 }
+*/
+
 
 
 //This is the source code for the old version of openssl (not applicable after openssl 3.0).

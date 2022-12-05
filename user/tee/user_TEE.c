@@ -9,6 +9,10 @@
 #include <string.h>
 #include "shm.h"
 
+#include "./../aes.h"
+#include "./../rsa.h"
+#include "./../sha256.h"
+
 void			tee_store(char *, char *);
 unsigned char	*tee_read(char *filename);
 
