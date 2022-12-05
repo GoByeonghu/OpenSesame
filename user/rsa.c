@@ -3,7 +3,7 @@
 //func: Generate key pair(RSA public key, RSA private key) and store to file
 //pre: None
 //post: Create public.txt and private.txt, (both in pem format) 
-void RSA_generateKeys(){
+int RSA_generateKeys(){
     EVP_PKEY*pkey=EVP_RSA_gen(1024);
     if(pkey==NULL){
         fprintf(stderr,"error: rsa gen\n");
@@ -25,6 +25,7 @@ void RSA_generateKeys(){
         perror("file error");
     }
     EVP_PKEY_free(pkey);
+    return 0;
 }
 
 //func: Get RSA public key

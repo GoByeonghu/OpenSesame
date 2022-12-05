@@ -1,3 +1,6 @@
+#ifndef __TCP_H__
+#define __TCP_H__
+
 #define SERC_TCP_PORT	7070
 #define SERV_HOST_ADDR	"127.0.0.1"
 
@@ -21,3 +24,9 @@ typedef struct {
 	char symkey[1024];
 	char encrypt[1024];
 } Encrypt;
+
+//////////////////////////////
+// 파라미터 flag: 1(공개키), 2(암호문), 3(파일), filename: 보낼 파일 명
+int sendToDoorlock(int flag, char *filename);
+
+#endif

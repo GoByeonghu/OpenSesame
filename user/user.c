@@ -1,6 +1,10 @@
 // user단 메인 프로세스
 
 #include "user.h"
+#include ".\socket\tcp.h"
+#include ".\tee\user_REE.c"
+#include ".\tee\user_TEE.c"
+
 #define MAX_IDPW_LENGTH 100
 
 static void getUsrInfo(char *, char *);                
@@ -71,7 +75,7 @@ int user_register()
 
 	// RSA 비대칭키 생성 및 저장
     int keylen = 4096;
-    if (makeRSAkey(keylen) == 0) {
+    if (RSA_generateKeys() == 0) {
 	    printf("키 생성을 성공하였습니다.\n");
     }
     else {
@@ -132,10 +136,10 @@ int tee_control() {
 		// 그냥 ok라고 하기
 
 		// 개폐 명령 암호화(flag: 1)
-		if (choice[0] == "Y" || choice[0] == "y") {
+		if (choice[0] == 'Y' || choice[0] == 'y') {
 			tee_encrypt("open", 1);
 		}
-		else if (choice[0] == "n" || choice[0] == "N") {
+		else if (choice[0] == 'n' || choice[0] == 'N') {
 			tee_encrypt("close", 1);
 		}
 		else {

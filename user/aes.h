@@ -1,4 +1,6 @@
 //#include "user.h"
+#ifndef __AES_H__
+#define __AES_H__
 
 //in user.h
 #include <stdio.h>
@@ -53,3 +55,5 @@ int AES_Encrypt(unsigned char *target, unsigned char *result);
 //and The size of the result buffer must be large enough.(128)
 //post: plain test store to result
 int AES_Decrypt(unsigned char *target, unsigned char *result);
+
+#endif

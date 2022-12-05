@@ -1,4 +1,6 @@
 // tee단 호출 process
+#ifndef __USER_TEE_C__
+#define __USER_TEE_C__
 
 #include <stdio.h>
 #include <unistd.h>
@@ -177,3 +179,5 @@ unsigned char *tee_read(char *filename) {
    fclose(file);
    return buf;
 }
+
+#endif
