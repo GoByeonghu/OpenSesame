@@ -34,8 +34,6 @@ char *encrpyt(int flag, char *filename) {
 		}
 
 		// 개인키로 암호화
-		private_encrypt(plaintext, sizeof(plaintext), private_key, encrpyted_string);
-
 		//error = private_encrypt(plaintext, sizeof(plaintext), private_key, encrpyted_string);
 		unsigned char temp_string=(uchar*)malloc(2048);
 		RSA_encrypt(plaintext,sizeof(plaintext),temp_string,&encrypted_length);
