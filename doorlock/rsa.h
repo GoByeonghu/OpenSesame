@@ -1,3 +1,6 @@
+#ifndef __RSA_H__
+#define __RSA_H__
+
 #include  <stdio.h>
 #include  <stdlib.h>
 #include <string.h>
@@ -13,7 +16,7 @@ typedef unsigned int uint;
 //func: Generate key pair(RSA public key, RSA private key) and store to file
 //pre: None
 //post: Create public.txt and private.txt, (both in pem format) 
-void RSA_generateKeys();
+int RSA_generateKeys();
 
 
 //func: Get RSA public key
@@ -38,3 +41,5 @@ uchar*RSA_encrypt(uchar*src,uint len,uchar*dst,int*length);
 //pre: dst must be a uchar of length 4096.
 //post: src is decrypted and stored as dst with a length of length.
 uchar*RSA_decrypt(uchar*src,int len, uchar*dst, int* length);
+
+#endif

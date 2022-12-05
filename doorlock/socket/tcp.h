@@ -1,3 +1,15 @@
+#ifndef __TCP_H__
+#define __TCP_H__
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <signal.h>
+#include <string.h>
+
 #define SERV_TCP_PORT	7070
 #define SERV_HOST_ADDR	"127.0.0.1"
 
@@ -24,3 +36,9 @@ typedef struct {
 	char symkey[1024];
 	char encrypt[1024];
 } Encrypt;
+
+void CloseServer(int signo);
+
+void recvFromUser(char *filename, int fileFlag);
+
+#endif

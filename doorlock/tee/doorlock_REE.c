@@ -1,5 +1,5 @@
 // 도어락단 REE 프로세스
-#include "shm.h"
+#include "doorlock_REE.h"
 
 int tee_decrypt(char *filename, int flag) {
     char	*ptr;

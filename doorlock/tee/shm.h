@@ -1,3 +1,6 @@
+#ifndef __SHM_H__
+#define __SHM_H__
+
 // shared memory header file
 
 #define SHM_KEY 0x9000
@@ -11,3 +14,5 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <string.h>
+
+#endif

@@ -6,14 +6,6 @@
  * [Calls]: bzero, socket, bind, perror, exit, listen, read, write, sprintf
  * [특기사항]: nothing
  =========================================================================== */
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <signal.h>
-#include <string.h>
 #include "tcp.h"
 
 int Sockfd;
