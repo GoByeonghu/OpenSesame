@@ -1,17 +1,5 @@
 // user단 호출
-#ifndef __USER_REE_C__
-#define __USER_REE_C__
-
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/ipc.h>
-#include <sys/shm.h>
-#include <sys/wait.h>
-#include "shm.h"
-#include "user_TEE.c"
-
+#include "user_REE.h"
 
 // 암호화 (flag 0: key 암호문, flag1: 개폐명령 암호문)
 int tee_encrypt(char *filename, int flag){
@@ -79,4 +67,3 @@ int tee_encrypt(char *filename, int flag){
 	return 1;
 }
 
-#endif

@@ -1,22 +1,5 @@
 // tee단 호출 process
-#ifndef __USER_TEE_C__
-#define __USER_TEE_C__
-
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/ipc.h>
-#include <sys/shm.h>
-#include <string.h>
-#include "shm.h"
-
-#include "./../aes.h"
-#include "./../rsa.h"
-#include "./../sha256.h"
-
-void			tee_store(char *, char *);
-unsigned char	*tee_read(char *filename);
+#include "user_TEE.h"
 
 // todo: encrpyt()
 char *encrpyt(int flag, char *filename) {
@@ -181,4 +164,3 @@ unsigned char *tee_read(char *filename) {
    return buf;
 }
 
-#endif

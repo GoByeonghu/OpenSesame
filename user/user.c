@@ -2,8 +2,8 @@
 
 #include "user.h"
 #include "./socket/tcp.h"
-#include "./tee/user_REE.c"
-#include "./tee/user_TEE.c"
+#include "./tee/user_REE.h"
+#include "./tee/user_TEE.h"
 
 #define MAX_IDPW_LENGTH 100
 
