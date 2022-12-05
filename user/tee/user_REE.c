@@ -50,7 +50,7 @@ int tee_encrypt(char *filename, int flag){
 		waitpid(pid, &status, 0);
 
 		// 암호화가 성공했는지 아닌지 체크
-		sprintf(msg, "%X", ptr);
+		sprintf(msg, "%s", ptr);
 
 		// 성공했을 경우
 		if (msg) {

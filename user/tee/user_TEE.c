@@ -41,17 +41,17 @@ char *encrpyt(int flag, char *filename) {
 
 		// 개인키로 암호화
 		//error = private_encrypt(plaintext, sizeof(plaintext), private_key, encrpyted_string);
-		unsigned char temp_string=(uchar*)malloc(2048);
+		unsigned char *temp_string=(uchar*)malloc(2048);
 		RSA_encrypt(plaintext,sizeof(plaintext),temp_string,&encrypted_length);
-		unsigned char Length_flag = "LE";
+		unsigned char *Length_flag = "LE";
 		unsigned char *length_string = (uchar*)malloc(4);
 		sprintf(length_string, "%d", encrypted_length);
 		
 		strcat(encrpyted_string,length_string);
 		strcat(encrpyted_string, Length_flag);
-		int j =strlen(encrpyted_string)
+		int j =strlen(encrpyted_string);
 		for(int i=0; i<encrypted_length; i++){
-			encryped_string[j]=temp_string[i];
+			encrpyted_string[j]=temp_string[i];
 			j++;		
 		}
 

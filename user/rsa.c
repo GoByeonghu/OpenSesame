@@ -8,7 +8,7 @@ int RSA_generateKeys(){
     if(pkey==NULL){
         fprintf(stderr,"error: rsa gen\n");
         ERR_print_errors_fp(stderr);
-        return;
+        return 0;
     }
     FILE*fp=fopen("PublicKey.pem","wt");
     if(fp!=NULL){
