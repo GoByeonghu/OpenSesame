@@ -145,10 +145,11 @@ void tee_store(char *filename, char *data) {
 	fseek(file, 0, SEEK_SET);
 
 	pt = data;
-	while (pt) {
+	while (*pt!='\0') {
 		fputc(*pt, file);
 		pt++;
 	}
+	fclose(file);
 }
 
 // 파일 읽기
