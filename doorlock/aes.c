@@ -1,19 +1,6 @@
 //#include "user.h"
 
-//in user.h
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include <time.h>
-#include <stdbool.h>
-
-#include <openssl/conf.h>
-#include <openssl/evp.h>
-#include <openssl/err.h>
-
-#define KEY_LENGTH 32
+#include "aes.h"
 
 void handleErrors(void)
 {

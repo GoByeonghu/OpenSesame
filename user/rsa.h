@@ -1,4 +1,14 @@
-#include "rsa.h"
+#include  <stdio.h>
+#include  <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <openssl/ssl.h>
+#include <openssl/evp.h>
+#include <openssl/rsa.h>
+#include <openssl/err.h>
+
+typedef unsigned char uchar;
+typedef unsigned int uint;
 
 //func: Generate key pair(RSA public key, RSA private key) and store to file
 //pre: None
@@ -126,7 +136,7 @@ uchar*RSA_decrypt(uchar*src,int len, uchar*dst, int* length){
     return dst;
 }
 
-/*
+
 //for test
 //This provides an example of using the function.
 //In fact, when adding this file, it is necessary to comment out or delete it.
@@ -163,7 +173,6 @@ int main(){
  return 0;
 
 }
-*/
 
 //This is the source code for the old version of openssl (not applicable after openssl 3.0).
 //Will be deleted in the future.
