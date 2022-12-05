@@ -27,8 +27,9 @@ int tee_decrypt(char *filename, int flag) {
 	// tee 프로세스
 	else if (pid == 0){
         // 복호화 및 무결성 검증 함수 호출
-		do_decrypt(filename, flag);
-        return 1;
+		//do_decrypt(filename, flag, NULL);///////////////////////////////////////////////////
+        do_decrypt(filename, flag, NULL);////////////////////////////////////////////////check it
+		return 1;
 	}
 
 	// 현재( == user)  프로세스

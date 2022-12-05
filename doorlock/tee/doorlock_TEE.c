@@ -43,7 +43,8 @@ int decrpyt(unsigned char *buf, int flag, char *filename) {
 		decrpyted[decrypted_length]='\0';
 
 		// 저장
-		tee_store(filename, decrpyted);
+		//tee_store(filename, decrpyted);
+		AES_SetKey(decrpyted);///////////////////////////////////
 		status=1;
 	}
 
