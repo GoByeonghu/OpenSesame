@@ -61,7 +61,7 @@ char *encrpyt(int flag, char *filename) {
 	// flag:1 == 대칭키로 암호화
 	else {
 		plaintext = filename;
-		
+		unsigned char *temp_string=(uchar*)malloc(2048);
 		//make message digest
 		char MD[SHA256_DIGEST_LENGTH*2+1];
 		SHA256_Encode(plaintext, MD);
@@ -76,9 +76,9 @@ char *encrpyt(int flag, char *filename) {
 
 		strcat(encrpyted_string,length_string);
                 strcat(encrpyted_string, Length_flag);
-                int temp_length =strlen(encrpyted_string)
+                int temp_length =strlen(encrpyted_string);
                 for(int i=0; i<cer_length; i++){
-                        encryped_string[j]=temp_string[i];
+                        encrpyted_string[j]=temp_string[i];
                         j++;
                 }
 		encryped_string[temp_length++]='M';
