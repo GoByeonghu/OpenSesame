@@ -1,14 +1,14 @@
-#include "rsa.h"
+#include  "rsa.h"
 
 //func: Generate key pair(RSA public key, RSA private key) and store to file
 //pre: None
 //post: Create public.txt and private.txt, (both in pem format) 
-void RSA_generateKeys(){
+int RSA_generateKeys(){
     EVP_PKEY*pkey=EVP_RSA_gen(1024);
     if(pkey==NULL){
         fprintf(stderr,"error: rsa gen\n");
         ERR_print_errors_fp(stderr);
-        return;
+        return 0;
     }
     FILE*fp=fopen("PublicKey.pem","wt");
     if(fp!=NULL){
@@ -25,6 +25,7 @@ void RSA_generateKeys(){
         perror("file error");
     }
     EVP_PKEY_free(pkey);
+    return 0;
 }
 
 //func: Get RSA public key
@@ -126,10 +127,11 @@ uchar*RSA_decrypt(uchar*src,int len, uchar*dst, int* length){
     return dst;
 }
 
-/*
+
 //for test
 //This provides an example of using the function.
 //In fact, when adding this file, it is necessary to comment out or delete it.
+/*
 int main(){
  
  //initialization 
@@ -164,6 +166,7 @@ int main(){
 
 }
 */
+
 
 //This is the source code for the old version of openssl (not applicable after openssl 3.0).
 //Will be deleted in the future.

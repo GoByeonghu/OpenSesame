@@ -4,6 +4,9 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
+#include "./socket/tcp.h"
+#include "sha256.h"
+#include "./tee/doorlock_TEE.h"
 
 // [Name]: openSesame
 // [Function]: 문 개폐 제어

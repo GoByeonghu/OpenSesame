@@ -6,7 +6,7 @@ int tee_decrypt(char *filename, int flag) {
 	int		shmid;
 	pid_t	pid;
 	int		status;
-	int		msg;
+	char		msg[2];
 
 	// SHM_KEY로 shared memory를 생성하고 id를 shmid에 저장함
 	if((shmid=shmget(SHM_KEY,SHM_SIZE,SHM_MODE))<0){
@@ -51,7 +51,7 @@ int tee_decrypt(char *filename, int flag) {
 		}
 
 		// 성공했을 경우
-		if (msg) {
+		if (msg[0]=='1') {
 			printf("무결성 검증 및 복호화 성공\n");
             return 1;
 		}

@@ -219,5 +219,5 @@ void recvFromUser(char *filename, int fileFlag)
 	// 	}
 	// }
 
-	return 0;
+	return;
 }

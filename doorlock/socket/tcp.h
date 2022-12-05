@@ -10,6 +10,8 @@
 #include <signal.h>
 #include <string.h>
 
+#include "./../tee/doorlock_REE.h"
+
 #define SERV_TCP_PORT	7070
 #define SERV_HOST_ADDR	"127.0.0.1"
 

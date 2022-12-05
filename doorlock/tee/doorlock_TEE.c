@@ -78,13 +78,13 @@ int decrpyt(unsigned char *buf, int flag, char *filename) {
 		
 		//remove crypto
 		for(int i=observer_start-2; i<sizeof(cer_target_string); i++){
-			cer_target_string[i] = '\0'
+			cer_target_string[i] = '\0';
 		}
 
                 cer_len = my_atoi(len_string);
 
                 // 공개키로 복호화
-		unsigned char certification=(uchar*)malloc(2048);
+		unsigned char *certification=(uchar*)malloc(2048);
                 RSA_decrypt(cer_target_string,cer_len, certification, &cer_len);
 		
 		
@@ -124,10 +124,10 @@ void do_decrypt(char *filename, int flag, char *decryptedfile) {
 	char *pData=ptr;
 	// 복호화가 오류난 경우: shared memory에 0 씀
 	if (!error) 
-		sprintf(pData, 0);
+		sprintf(pData, "0");
 	// 복호화가 성공인 경우: shared memory에 1 씀
 	else 
-		sprintf(pData, 1);
+		sprintf(pData, "1");
 
 	// shared memory mapping 해제
 	if(shmdt(ptr)<0){
