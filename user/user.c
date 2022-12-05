@@ -1,9 +1,9 @@
 // user단 메인 프로세스
 
 #include "user.h"
-#include ".\socket\tcp.h"
-#include ".\tee\user_REE.c"
-#include ".\tee\user_TEE.c"
+#include "./socket/tcp.h"
+#include "./tee/user_REE.c"
+#include "./tee/user_TEE.c"
 
 #define MAX_IDPW_LENGTH 100
 

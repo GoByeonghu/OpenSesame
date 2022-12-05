@@ -8,8 +8,8 @@
 #include <signal.h>
 #include <string.h>
 #include "tcp.h"
-#include ".\..\tee\user_REE.c"
-#include ".\..\tee\user_TEE.c"
+#include "./../tee/user_REE.c"
+#include "./../tee/user_TEE.c"
 
 // 파라미터 flag: 1(공개키), 2(암호문), 3(파일), filename: 보낼 파일 명
 int sendToDoorlock(int flag, char *filename) {

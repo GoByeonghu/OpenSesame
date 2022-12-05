@@ -69,23 +69,24 @@ char *encrpyt(int flag, char *filename) {
 		//make certification
 		int cer_length;
 		unsigned char *certification = (unsigned char*)malloc(2048);
-		RSA_encrypt(MD,strlen(MD),certification,cer_length);
-		unsigned char Length_flag = "LE";
+		RSA_encrypt(MD,strlen(MD),certification,&cer_length);
+		unsigned char *Length_flag = "LE";
                 unsigned char *length_string = (uchar*)malloc(4);
                 sprintf(length_string, "%d", cer_length);
 
 		strcat(encrpyted_string,length_string);
                 strcat(encrpyted_string, Length_flag);
                 int temp_length =strlen(encrpyted_string);
+		int j =strlen(encrpyted_string);
                 for(int i=0; i<cer_length; i++){
                         encrpyted_string[j]=temp_string[i];
                         j++;
                 }
-		encryped_string[temp_length++]='M';
-		encryped_string[temp_length++]='D';
+		encrpyted_string[temp_length++]='M';
+		encrpyted_string[temp_length++]='D';
 		
 		// 대칭키로 암호
-                AES_Encrypt(plaintext, encryped_string+temp_length);
+                AES_Encrypt(plaintext, encrpyted_string+temp_length);
 		
 		
 	}
