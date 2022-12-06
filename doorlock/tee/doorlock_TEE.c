@@ -15,7 +15,8 @@ int my_atoi(const char* str) {
 int decrpyt(unsigned char *buf, int flag, char *filename) {
 	printf("decrypt()\n");
 	int				status;
-	unsigned char	decrpyted[1000000];
+	//unsigned char	decrpyted[1000000];
+	unsigned char *decrpyted=(uchar*)malloc(100000);
 
 	status = 1;
 	// 공개키로 복호화
@@ -27,7 +28,7 @@ int decrpyt(unsigned char *buf, int flag, char *filename) {
 		unsigned char *target_string=(unsigned char*)malloc(2048);
 		memset(len_string, 0, 4);
 		memset(target_string, 0, 2048);
-		memset(decrpyted, 0, 1000000);
+		memset(decrpyted, 0, 100000);
 
 		printf("buf: %s\n\n", buf);
 		int k =0;
@@ -44,11 +45,13 @@ int decrpyt(unsigned char *buf, int flag, char *filename) {
 		}
 		len = my_atoi(len_string);
 		printf("target: %s\n", target_string);
+		printf("len: %d\n", len);
 
 		// 공개키로 복호화
 		//status = public_decrypt(buf, sizeof(buf), key, decrpyted);
 		RSA_decrypt(target_string, len, decrpyted, &decrypted_length);
 		decrpyted[decrypted_length]='\0';
+		printf("key: %s\n", decrpyted);
 
 		printf("decrypt flag 0-2\n");
 		// 저장
@@ -59,6 +62,7 @@ int decrpyt(unsigned char *buf, int flag, char *filename) {
 		printf("decrypt flag 0-3\n");
 		free(len_string);
 		free(target_string);
+		free(decrpyted);
 	}
 
 	// 대칭키로 복호화
@@ -112,6 +116,7 @@ int decrpyt(unsigned char *buf, int flag, char *filename) {
 		free(len_string);
 		free(cer_string);
 		free(cer_target_string);
+		free(decrpyted);
 	}
 
 	printf("return decrypt\n");
