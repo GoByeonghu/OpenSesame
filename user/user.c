@@ -34,9 +34,9 @@ int main(int argc, char *argv[])
 	tee_encrypt("encrpyted_string", 0);
 
 	// 암호문 전송
-	sleep(3000);
+	sleep(10);
 	sendToDoorlock(2, "encrpyted_string");
-	sleep(3000);
+	sleep(10);
 	sendToDoorlock(3, "ID");
 
 	/* 3. 개폐 명령 */

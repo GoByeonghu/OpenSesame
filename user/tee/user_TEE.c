@@ -82,7 +82,6 @@ void do_encrypt(char *filename, int flag) {
 	FILE	*file;
 	char	*ptr;
 	char	*encrypted_string;
-	char	*target_string;
 	int		shmid;
 	int		error;  // 대칭키 에러 표시
 
@@ -117,7 +116,8 @@ void do_encrypt(char *filename, int flag) {
 
 		// 대칭키 암호화
 		if (flag == 0) {
-			encrypted_string = encrpyt(0, target_string);
+			encrypted_string = encrpyt(0, "sym key");
+			printf("encrypted_string: %s\n", encrypted_string);
 			tee_store(filename, encrypted_string);
 		}
 

@@ -8,7 +8,7 @@ int sendToDoorlock(int flag, char *filename) {
 	FILE *file;
 	char buf[256];
 	char sendFlag[10];
-	size_t fsize, nsize = 0;
+	size_t fsize = 0, nsize = 0;
 	MsgType msg;
 	Encrypt enc;
 	int		option;
@@ -38,7 +38,8 @@ int sendToDoorlock(int flag, char *filename) {
 		printf("===== 공개키 전송을 시작합니다... =====\n");
 
 		// 플래그 1을 먼저 보냄
-		itoa(flag, sendFlag, 10);
+		//itoa(flag, sendFlag, 10);
+		sendFlag[0] = '1';
 		send(sockfd, sendFlag, 4, 0);
 
 		// 공개키 파일 이름
@@ -53,7 +54,8 @@ int sendToDoorlock(int flag, char *filename) {
 			send(sockfd, buf, fpsize, 0);
 		}		
 		fclose(file);
-		
+	
+		printf("send public key\n");	
 		// sd에서 서버에서 온 reply를 읽는다.
 		if((n=read(sockfd,&msg,sizeof(msg)))<0){
 			perror("read");
@@ -77,14 +79,20 @@ int sendToDoorlock(int flag, char *filename) {
 	else if (flag == SEND_ENCRYPTFILE) {
 		printf("===== 암호문 전송을 시작합니다... =====\n");
 		// 플래그 2을 먼저 보냄
-		itoa(flag, sendFlag, 10);
+		//itoa(flag, sendFlag, 10);
+		sprintf(sendFlag, "2");
 		send(sockfd, sendFlag, 4, 0);
-	
+		printf("file open\n");
+			
 		// 암호문 file 전송
-		file = fopen(filename, "rb");
+		file = fopen(filename, "r");
+		printf("start read 1\n");
 		fseek(file, 0, SEEK_END);
+		printf("start read 2\n");
 		fsize = ftell(file);
+		printf("start read 3\n");
 		fseek(file, 0, SEEK_SET);
+		printf("start read 4\n");
 
 		while (nsize != fsize) {
 			int fpsize = fread(buf, 1, 256, file);
@@ -116,7 +124,8 @@ int sendToDoorlock(int flag, char *filename) {
 	else if (flag == SEND_FILE) {
 		printf("===== 파일 전송을 시작합니다... =====\n");
 		// 플래그 3을 먼저 보냄
-		itoa(flag, sendFlag, 10);
+		//itoa(flag, sendFlag, 10);
+		sendFlag[0] = '3';
 		send(sockfd, sendFlag, 4, 0);
 	
 		file = fopen(filename, "rb");
