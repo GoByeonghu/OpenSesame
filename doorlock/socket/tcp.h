@@ -12,7 +12,7 @@
 
 #include "./../tee/doorlock_REE.h"
 
-#define SERV_TCP_PORT	7070
+#define SERV_TCP_PORT	8080
 #define SERV_HOST_ADDR	"127.0.0.1"
 
 #define MSG_OK		1

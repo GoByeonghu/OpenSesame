@@ -11,6 +11,7 @@ int sendToDoorlock(int flag, char *filename) {
 	size_t fsize, nsize = 0;
 	MsgType msg;
 	Encrypt enc;
+	int		option;
 
 	// socket을 생성한다.
 	// 이때 ipv4(PF_INET), TCP(SOCK_STREAM)를 파라미터로 설정한다.
@@ -18,9 +19,12 @@ int sendToDoorlock(int flag, char *filename) {
 		perror("socket");
 		exit(1);
 	}
+	option = 1;
+	setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option));
 
 	bzero(&servAddr,sizeof(servAddr));		
-	servAddr.sin_family=PF_INET;			
+	servAddr.sin_family=PF_INET;		
+	servAddr.sin_port = htons(SERV_TCP_PORT);	
 	servAddr.sin_addr.s_addr=inet_addr(SERV_HOST_ADDR); 
 
 	// connect로 server의 주소에 접속해서 연결한다.

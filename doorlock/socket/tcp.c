@@ -36,6 +36,7 @@ void recvFromUser(char *filename, int fileFlag)
 	size_t filesize = 0, bufsize = 256;
 	char buf[256];
 	MsgType msg;
+	int		option;
 
 	signal(SIGINT, CloseServer);
 
@@ -46,6 +47,9 @@ void recvFromUser(char *filename, int fileFlag)
 		perror("socket");
 		exit(1);
 	}
+
+	option = 1;
+	setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option));
 
 	bzero((char *)&servAddr, sizeof(servAddr));	  // 초기화
 	servAddr.sin_family = PF_INET;				  // ipv4
@@ -80,6 +84,7 @@ void recvFromUser(char *filename, int fileFlag)
 	// 공개키 수신하는 경우
 	if (flag == SEND_PUBLICKEY)
 	{
+		printf("===== 공개키 수신 =====\n");
 		file = fopen(filename, "wb");
 		int nbyte = 256;
 		while (nbyte != 0)
@@ -108,6 +113,8 @@ void recvFromUser(char *filename, int fileFlag)
 	// 암호문 파일 수신하는 경우
 	else if (flag == SEND_ENCRYPTFILE)
 	{
+		printf("===== 암호문 수신 =====\n");
+
 		file = fopen(filename, "wb");
 		int nbyte = 256;
 		while (nbyte != 0)
@@ -140,6 +147,8 @@ void recvFromUser(char *filename, int fileFlag)
 
 	// 파일 수신하는 경우 (flag == 3)
 	else {
+		printf("===== 파일 수신 =====\n");
+
 		file = fopen(filename, "wb");
 		int nbyte = 256;
 		while (nbyte != 0)
@@ -162,62 +171,6 @@ void recvFromUser(char *filename, int fileFlag)
 		usleep(10000);
 		close(newSockfd);
 	}
-
-	// while(1){
-	// 	// accept로 client의 connection을 기다린다. 이때 cliAddr에서는 client의 주소 정보가 저장됨
-	// 	if((newSockfd=accept(Sockfd,(struct sockaddr *)&cliAddr,&cliAddrLen))<0){
-	// 		perror("accept");
-	// 		exit(1);
-	// 	}
-	// 	/* socket descriptor에서 정보를 읽음
-	// 	if((n=read(newSockfd,&msg,sizeof(msg)))<0){
-	// 		perror("read");
-	// 		exit(1);
-	// 	}
-	// 	*/
-	// 	int type;
-	// 	read(newSockfd, type, 4);
-	// 	// 공개키 수신하는 경우
-	// 	if (type == 1) {
-	// 		file = fopen("PublicKey.pem", "wb");
-	// 		int nbyte = 256;
-	// 		while(nbyte != 0) {
-	// 			nbyte = recv(newSockfd, buf, bufsize, 0);
-	// 			fwrite(buf, sizeof(char), nbyte, file);
-	// 		}
-	// 		fclose(file);
-
-	// 		msg.type = MSG_OK;
-	// 		sprintf(msg.data, DOORLOCK);
-
-	// 		// 연결된 client socket descriptor로 reply를 보냄
-	// 		if(write(newSockfd,&msg,sizeof(msg))<0){
-	// 			perror("write");
-	// 			exit(1);
-	// 		}
-	// 		printf("응답 완료.\n");
-
-	// 		usleep(10000);
-	// 		close(newSockfd);
-	// 	}
-
-	// 	// todo: do_encrypt() + genSymKey() 결과 파일 수신하는 경우
-	// 	else {
-
-	// 		// todo: 파일 읽어야 함
-
-	// 		// 연결된 client socket descriptor로 reply를 보냄
-	// 		msg.type = MSG_OK;
-	// 		if(write(newSockfd,&msg,sizeof(msg))<0){
-	// 			perror("write");
-	// 			exit(1);
-	// 		}
-	// 		printf("응답 완료.\n");
-
-	// 		usleep(10000);
-	// 		close(newSockfd);
-	// 	}
-	// }
 
 	return;
 }
