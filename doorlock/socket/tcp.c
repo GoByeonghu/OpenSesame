@@ -49,7 +49,7 @@ void recvFromUser(char *filename, int fileFlag)
 	}
 
 	option = 1;
-	setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option));
+	setsockopt(Sockfd, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option));
 
 	bzero((char *)&servAddr, sizeof(servAddr));	  // 초기화
 	servAddr.sin_family = PF_INET;				  // ipv4
@@ -64,7 +64,6 @@ void recvFromUser(char *filename, int fileFlag)
 	}
 
 	listen(Sockfd, 1); //한번에 하나만 기다리도록 설정
-
 	cliAddrLen = sizeof(cliAddr);
 	// accept로 client의 connection을 기다린다. 이때 cliAddr에서는 client의 주소 정보가 저장됨
 	if ((newSockfd = accept(Sockfd, (struct sockaddr *)&cliAddr, &cliAddrLen)) < 0)
@@ -89,15 +88,22 @@ void recvFromUser(char *filename, int fileFlag)
 		int nbyte = 256;
 		while (nbyte != 0)
 		{
+			printf("nbyte: %d\n", nbyte);
 			nbyte = recv(newSockfd, buf, bufsize, 0);
-			fwrite(buf, sizeof(char), nbyte, file);
+			int status = fwrite(buf, sizeof(char), nbyte, file);
+			printf("status: %d\n", status);
+			if (status == 16) {
+				break;
+			}
 		}
 		fclose(file);
+		printf("===== key received =====\n");
 
 		msg.type = MSG_OK;
 		// 도어락 시리얼 번호 전송
 		sprintf(msg.data, DOORLOCK);
 
+		printf("===== send serial number =====\n");
 		// 연결된 client socket descriptor로 reply를 보냄
 		if (write(newSockfd, &msg, sizeof(msg)) < 0)
 		{
@@ -111,7 +117,7 @@ void recvFromUser(char *filename, int fileFlag)
 	}
 
 	// 암호문 파일 수신하는 경우
-	else if (flag == '2')
+	else if (flag[0] == '2')
 	{
 		printf("===== 암호문 수신 =====\n");
 
@@ -172,5 +178,6 @@ void recvFromUser(char *filename, int fileFlag)
 		close(newSockfd);
 	}
 
+	close(Sockfd);
 	return;
 }
