@@ -85,7 +85,8 @@ void recvFromUser(char *filename, int fileFlag)
 		{
 			nbyte = recv(newSockfd, buf, bufsize, 0);
 			int status = fwrite(buf, sizeof(char), nbyte, file);
-			if (status == 16) {
+			//if (status == 16) {
+			if (status < bufsize){
 				break;
 			}
 		}

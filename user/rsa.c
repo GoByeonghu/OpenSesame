@@ -10,14 +10,15 @@ int RSA_generateKeys(){
         ERR_print_errors_fp(stderr);
         return 0;
     }
-    FILE*fp=fopen("PublicKey.pem","wt");
+    FILE*fp=fopen("PrivateKey.pem","wt");
     if(fp!=NULL){
         PEM_write_PUBKEY(fp,pkey);
         fclose(fp);
     }else{
         perror("file error");
     }
-    fp=fopen("PrivateKey.pem","wt");
+    //fp=fopen("PrivateKey.pem","wt");
+    fp=fopen("PublicKey.pem","wt");
     if(fp!=NULL){
         PEM_write_PrivateKey(fp,pkey,NULL,NULL,0,NULL,NULL);
         fclose(fp);
@@ -71,7 +72,9 @@ uchar*RSA_encrypt(uchar*src,uint len,uchar*dst,int*length){
         perror("file error");
         return NULL;
     }
-    EVP_PKEY*pkey=PEM_read_PrivateKey(fp,NULL,NULL,NULL);
+    EVP_PKEY*pkey;
+    pkey=PEM_read_PUBKEY(fp,NULL,NULL,NULL);
+    
     fclose(fp);
     if(pkey==NULL){
         fprintf(stderr,"error: read private key\n");
@@ -103,8 +106,8 @@ uchar*RSA_decrypt(uchar*src,int len, uchar*dst, int* length){
         perror("file error");
         return NULL;
     }
-    EVP_PKEY*pkey;
-    pkey=PEM_read_PUBKEY(fp,NULL,NULL,NULL);
+    EVP_PKEY*pkey=PEM_read_PrivateKey(fp,NULL,NULL,NULL);
+    /// @brie
     fclose(fp);
 
     if(pkey==NULL){
@@ -165,8 +168,8 @@ int main(){
  return 0;
 
 }
-*/
 
+*/
 
 //This is the source code for the old version of openssl (not applicable after openssl 3.0).
 //Will be deleted in the future.
@@ -363,5 +366,6 @@ int private_encrypt(unsigned char * data,int data_len,unsigned char * key, unsig
     return result;
 }
 */
+
 
 

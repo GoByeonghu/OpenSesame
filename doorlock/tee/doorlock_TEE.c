@@ -16,7 +16,7 @@ int decrpyt(unsigned char *buf, int flag, char *filename) {
 	printf("decrypt()\n");
 	int				status;
 	//unsigned char	decrpyted[1000000];
-	unsigned char *decrpyted=(uchar*)malloc(100000);
+	unsigned char *decrpyted=(uchar*)malloc(2048);
 
 	status = 1;
 	// 공개키로 복호화
@@ -24,25 +24,30 @@ int decrpyt(unsigned char *buf, int flag, char *filename) {
 		printf("decrypt flag 0-1\n");
 		int len;
 		int decrypted_length;
-		unsigned char *len_string=(unsigned char*)malloc(2048);
+		unsigned char len_string[4];
 		unsigned char *target_string=(unsigned char*)malloc(2048);
 		memset(len_string, 0, 4);
 		memset(target_string, 0, 2048);
-		memset(decrpyted, 0, 100000);
+		memset(decrpyted, 0, 2048);
 
 		printf("buf: %s\n\n", buf);
 		int k =0;
 		for(int i=0; i<2046; i++){
-			len_string[i]=buf[i];
 			if(buf[i]=='L'){
-				if(buf[i+1]='E'){
-				len_string[i]='\0';
+				if(buf[i+1]=='E'){
+				for(int h=0; h<i; h++){
+					len_string[h]=buf[h];
+					printf("|%c|",len_string[h]);
+
+				}
+				len_string[i]= '\0';
 				k=0;
 				}
 			}
 			target_string[k]=buf[i+2];
 			k++;
 		}
+
 		len = my_atoi(len_string);
 		printf("target: %s\n", target_string);
 		printf("len: %d\n", len);
@@ -67,26 +72,34 @@ int decrpyt(unsigned char *buf, int flag, char *filename) {
 
 	// 대칭키로 복호화
 	else if (flag == 1) {
+
 		printf("decrypt flag 1\n");
+		printf("buf:%s", buf);
 		//get certification
 		int cer_len;
                 int cer_decrypted_length;
-                unsigned char *len_string=(unsigned char*)malloc(4);
+                unsigned char len_string[4];
                 unsigned char *cer_string=(unsigned char*)malloc(1024);
 		unsigned char *cer_target_string=(unsigned char*)malloc(1024);
                 int k =0;
 		int observer_start=0;
 		int observer_end=0;
-                for(int i=0; i<2048; i++){
-                        len_string[i]=buf[i];
+                
+		for(int i=0; i<2046; i++){
                         if(buf[i]=='L'){
-                                if(buf[i+1]='E'){
-                                len_string[i]='\0';
+                                if(buf[i+1]=='E'){
+                                for(int h=0; h<i; h++){
+                                        len_string[h]=buf[h];
+                                        printf("|%c|",len_string[h]);
+
+                                }
+
+				len_string[i]='\0';
                                 k=0;
                                 }
                         }
 			if(buf[i]=='M'){
-                                if(buf[i+1]='D'){
+                                if(buf[i+1]=='D'){
                                 observer_start=i+2;
                                 }
                         }
@@ -129,7 +142,7 @@ void do_decrypt(char *filename, int flag, char *decryptedfile) {
 	int 			shmid;
 	int 			error;  // 복호화 에러 표시
 	unsigned char	*buf=(uchar*)malloc(2048);
-
+   
 	// SHM_KEY로 생성된 shared memor의 id를 shmid에 저장함
 	if((shmid=shmget(SHM_KEY,SHM_SIZE,SHM_MODE))<0){
 		perror("shmget");
@@ -146,8 +159,9 @@ void do_decrypt(char *filename, int flag, char *decryptedfile) {
    	FILE *file = fopen(filename, "r");
    	fseek(file, 0, SEEK_SET);
    	
-   	while (fgets(buf, 256, file)) {}
-   	fclose(file);
+   	//while (fgets(buf, 256, file)) {}
+   	fread(buf, sizeof(char), 2048, file);//////
+	fclose(file);
 
 	// 복호화 진행
 	error = decrpyt(buf, flag, decryptedfile);
