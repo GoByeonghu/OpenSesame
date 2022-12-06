@@ -130,8 +130,6 @@ int sendToDoorlock(int flag, char *filename) {
 			send(sockfd, buf, fpsize, 0);
 		}		
 		fclose(file);
-		buf[0] = 0;
-		send(sockfd, buf, 1, 0);
 
 		printf("Waiting for reply...\n");
 

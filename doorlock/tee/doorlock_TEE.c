@@ -25,6 +25,11 @@ int decrpyt(unsigned char *buf, int flag, char *filename) {
 		int decrypted_length;
 		unsigned char *len_string=(unsigned char*)malloc(4);
 		unsigned char *target_string=(unsigned char*)malloc(2048);
+		memset(len_string, 0, 4);
+		memset(target_string, 0, 2048);
+		memset(decrpyted, 0, 1000000);
+
+		printf("here\n");
 		int k =0;
 		for(int i=0; i<sizeof(buf)-2; i++){
 			len_string[i]=buf[i];
@@ -38,6 +43,7 @@ int decrpyt(unsigned char *buf, int flag, char *filename) {
 			k++;
 		}
 		len = my_atoi(len_string);
+		printf("target: %s\n", target_string);
 
 		// 공개키로 복호화
 		//status = public_decrypt(buf, sizeof(buf), key, decrpyted);
@@ -80,7 +86,6 @@ int decrpyt(unsigned char *buf, int flag, char *filename) {
                                 observer_start=i+2;
                                 }
                         }
-
                         cer_target_string[k]=buf[i+2];
                         k++;
                 }
@@ -118,7 +123,7 @@ void do_decrypt(char *filename, int flag, char *decryptedfile) {
 	char			*ptr;
 	int 			shmid;
 	int 			error;  // 복호화 에러 표시
-	unsigned char	*buf;
+	unsigned char	*buf=(uchar*)malloc(2048);
 
 	// SHM_KEY로 생성된 shared memor의 id를 shmid에 저장함
 	if((shmid=shmget(SHM_KEY,SHM_SIZE,SHM_MODE))<0){
@@ -132,7 +137,12 @@ void do_decrypt(char *filename, int flag, char *decryptedfile) {
 		exit(1);
 	}
 
-	buf = tee_read(filename);
+	memset(buf, 0, 2048);
+   	FILE *file = fopen(filename, "r");
+   	fseek(file, 0, SEEK_SET);
+   	
+   	while (fgets(buf, 256, file)) {}
+   	fclose(file);
 
 	// 복호화 진행
 	error = decrpyt(buf, flag, decryptedfile);
@@ -155,6 +165,7 @@ void do_decrypt(char *filename, int flag, char *decryptedfile) {
 		perror("shmdt");
 		exit(1);
 	}
+	free(buf);
 }
 
 // 파일로 저장

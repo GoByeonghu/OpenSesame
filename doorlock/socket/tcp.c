@@ -157,9 +157,9 @@ void recvFromUser(char *filename, int fileFlag)
 		{
 			printf("nbyte: %d\n", nbyte);
 			nbyte = recv(newSockfd, buf, bufsize, 0);
+			fwrite(buf, sizeof(char), nbyte, file);
 			if (nbyte < bufsize)
 				break;
-			fwrite(buf, sizeof(char), nbyte, file);
 		}
 		fclose(file);
 

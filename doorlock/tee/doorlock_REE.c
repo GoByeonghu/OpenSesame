@@ -30,7 +30,7 @@ int tee_decrypt(char *filename, int flag) {
 		//do_decrypt(filename, flag, NULL);///////////////////////////////////////////////////
         do_decrypt(filename, flag, NULL);////////////////////////////////////////////////check it
 		printf("done\n");	
-		exit(1);
+		//exit(1);
 	}
 
 	// 현재( == user)  프로세스

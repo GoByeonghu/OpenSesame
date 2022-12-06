@@ -6,9 +6,10 @@ char *encrpyt(int flag, char *filename) {
 	int				error;
 	unsigned char	*encrpyted_string=(uchar*)malloc(2048);
 	int encrypted_length;
-	unsigned char	*plaintext;
+	unsigned char	*plaintext=(uchar*)malloc(1024);
 	unsigned char	*private_key;
 	unsigned char	*sym_key;
+	FILE	*file;
 
 	// todo: 암호화 하기
 	//private_key = tee_read("PrivateKey.pem");
@@ -19,17 +20,19 @@ char *encrpyt(int flag, char *filename) {
 			plaintext = filename;
 		}
 		else {
-			plaintext = tee_read("SymmetricKey256.txt");
+			AES_GetKey(plaintext);
 		}
 
 		// 개인키로 암호화
 		//error = private_encrypt(plaintext, sizeof(plaintext), private_key, encrpyted_string);
 		unsigned char *temp_string=(uchar*)malloc(2048);
-		RSA_encrypt(plaintext,256,temp_string,&encrypted_length);
+		memset(temp_string, 0, 2048);
+		memset(encrpyted_string, 0, 2048);
+		RSA_encrypt(plaintext,32,temp_string,&encrypted_length);
 		unsigned char *Length_flag = "LE";
 		unsigned char *length_string = (uchar*)malloc(4);
 		sprintf(length_string, "%d", encrypted_length);
-		
+	
 		strcat(encrpyted_string,length_string);
 		strcat(encrpyted_string, Length_flag);
 		int j =strlen(encrpyted_string);
@@ -40,6 +43,7 @@ char *encrpyt(int flag, char *filename) {
 
 		free(temp_string);
 		free(length_string);
+		free(plaintext);
 	}
 
 	// flag:1 == 대칭키로 암호화
@@ -74,7 +78,8 @@ char *encrpyt(int flag, char *filename) {
 	
 		free(certification);
 		free(length_string);
-		free(temp_string);	
+		free(temp_string);
+		free(plaintext);	
 		
 	}
 
@@ -167,6 +172,7 @@ unsigned char *tee_read(char *filename) {
    
    while (fgets(buf, 256, file)) {}
    fclose(file);
+   
    return buf;
 }
 
