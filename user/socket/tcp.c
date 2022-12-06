@@ -7,7 +7,7 @@ int sendToDoorlock(int flag, char *filename) {
 	struct sockaddr_in servAddr;
 	FILE *file;
 	char buf[256];
-	int sendFlag;
+	char sendFlag[10];
 	size_t fsize, nsize = 0;
 	MsgType msg;
 	Encrypt enc;
@@ -38,7 +38,7 @@ int sendToDoorlock(int flag, char *filename) {
 		printf("===== 공개키 전송을 시작합니다... =====\n");
 
 		// 플래그 1을 먼저 보냄
-		sendFlag = flag;
+		itoa(flag, sendFlag, 10);
 		send(sockfd, sendFlag, 4, 0);
 
 		// 공개키 파일 이름
@@ -77,7 +77,7 @@ int sendToDoorlock(int flag, char *filename) {
 	else if (flag == SEND_ENCRYPTFILE) {
 		printf("===== 암호문 전송을 시작합니다... =====\n");
 		// 플래그 2을 먼저 보냄
-		sendFlag = flag;
+		itoa(flag, sendFlag, 10);
 		send(sockfd, sendFlag, 4, 0);
 	
 		// 암호문 file 전송
@@ -116,7 +116,7 @@ int sendToDoorlock(int flag, char *filename) {
 	else if (flag == SEND_FILE) {
 		printf("===== 파일 전송을 시작합니다... =====\n");
 		// 플래그 3을 먼저 보냄
-		sendFlag = flag;
+		itoa(flag, sendFlag, 10);
 		send(sockfd, sendFlag, 4, 0);
 	
 		file = fopen(filename, "rb");

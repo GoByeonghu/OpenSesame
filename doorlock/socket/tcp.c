@@ -78,11 +78,11 @@ void recvFromUser(char *filename, int fileFlag)
 		exit(1);
 	}
 	*/
-	int flag;
+	char flag[10];
 	read(newSockfd, flag, 4);
 
 	// 공개키 수신하는 경우
-	if (flag == SEND_PUBLICKEY)
+	if (flag[0] == '1')
 	{
 		printf("===== 공개키 수신 =====\n");
 		file = fopen(filename, "wb");
@@ -111,7 +111,7 @@ void recvFromUser(char *filename, int fileFlag)
 	}
 
 	// 암호문 파일 수신하는 경우
-	else if (flag == SEND_ENCRYPTFILE)
+	else if (flag == '2')
 	{
 		printf("===== 암호문 수신 =====\n");
 
