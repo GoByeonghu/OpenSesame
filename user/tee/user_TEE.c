@@ -25,7 +25,7 @@ char *encrpyt(int flag, char *filename) {
 		// 개인키로 암호화
 		//error = private_encrypt(plaintext, sizeof(plaintext), private_key, encrpyted_string);
 		unsigned char *temp_string=(uchar*)malloc(2048);
-		RSA_encrypt(plaintext,sizeof(plaintext),temp_string,&encrypted_length);
+		RSA_encrypt(plaintext,256,temp_string,&encrypted_length);
 		unsigned char *Length_flag = "LE";
 		unsigned char *length_string = (uchar*)malloc(4);
 		sprintf(length_string, "%d", encrypted_length);
@@ -38,7 +38,8 @@ char *encrpyt(int flag, char *filename) {
 			j++;		
 		}
 
-		
+		free(temp_string);
+		free(length_string);
 	}
 
 	// flag:1 == 대칭키로 암호화
@@ -119,6 +120,7 @@ void do_encrypt(char *filename, int flag) {
 			encrypted_string = encrpyt(0, "sym key");
 			printf("encrypted_string: %s\n", encrypted_string);
 			tee_store(filename, encrypted_string);
+			free(encrypted_string);
 		}
 
 		// 개폐 명령 암호화
@@ -126,6 +128,7 @@ void do_encrypt(char *filename, int flag) {
 			// 개폐 명령 암호화 부분은 이 부분 바꾸시면 될듯합니다
 			encrypted_string = encrpyt(1, filename);
 			tee_store("opencommand", encrypted_string);
+			free(encrypted_string);
 		}
 	}
 
