@@ -29,8 +29,7 @@ int tee_decrypt(char *filename, int flag) {
         // 복호화 및 무결성 검증 함수 호출
 		//do_decrypt(filename, flag, NULL);///////////////////////////////////////////////////
         do_decrypt(filename, flag, NULL);////////////////////////////////////////////////check it
-		printf("done\n");	
-		//exit(1);
+		exit(1);
 	}
 
 	// 현재( == user)  프로세스

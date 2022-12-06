@@ -109,7 +109,6 @@ int sendToDoorlock(int flag, char *filename) {
 		}
 		
 		close(sockfd); 
-
 	}
 
 	// 파일 보내는 경우

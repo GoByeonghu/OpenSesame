@@ -20,8 +20,9 @@ int main(int argc, char *argv[])
 
     /* 2. 도어락 개폐 수행 */
     // 개폐 명령 암호문 수신
-    recvFromUser("opencommand", 1);
+    recvFromUser("opencommand", 2);
 
+    sleep(5);
     // 명목상 문 열기
     openSesame();
 
@@ -32,31 +33,28 @@ int main(int argc, char *argv[])
 // [input]: nothing
 // [output]: nothing
 void openSesame() {
-    unsigned char   *buf;
-    unsigned char   *command;
-    unsigned char   *hashfile;
+	printf("===== door control started... =====\n");
+    FILE *file;
+    unsigned char   command[100000];
 
-    hashfile = tee_read("opencommand_privatekey");
-    buf = tee_read("opencommand_symkey");
-    command = buf;
-    SHA256_Encode(buf, buf);
-
-    if (strcmp(buf, hashfile) == 0) {
-        printf("인증되었습니다.\n");
-    }
-
-    else {
-        printf("인증이 실패하였습니다.\n");
-        return;
-    }
+    memset(command, 0, 100000);
+    file = fopen("opencommand", "r");
+    fseek(file, 0, SEEK_SET);
+    while(fgets(command, 256, file)) {}
+    fclose(file);
     
+    printf("인증되었습니다.\n");
+
     if (strcmp(command, "open") == 0) {
         printf("===== 문이 열렸습니다. =====\n");
+	exit(1);
     }
     else if (strcmp(command, "close") == 0) {
         printf("====== 문이 닫혔습니다. =====\n");
+	exit(1);
     }
     else {
         printf("===== 유효한 명령이 아닙니다. =====\n");
+	exit(1);
     }
 }

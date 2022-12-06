@@ -65,16 +65,13 @@ int decrpyt(unsigned char *buf, int flag, char *filename) {
 		status=1;
 
 		printf("decrypt flag 0-3\n");
-		free(len_string);
 		free(target_string);
 		free(decrpyted);
 	}
 
 	// 대칭키로 복호화
 	else if (flag == 1) {
-
 		printf("decrypt flag 1\n");
-		printf("buf:%s", buf);
 		//get certification
 		int cer_len;
                 int cer_decrypted_length;
@@ -84,7 +81,10 @@ int decrpyt(unsigned char *buf, int flag, char *filename) {
                 int k =0;
 		int observer_start=0;
 		int observer_end=0;
-                
+               
+	        memset(cer_string, 0, 1024);
+		memset(cer_target_string, 0, 1024);	
+		memset(decrpyted, 0, 2048);
 		for(int i=0; i<2046; i++){
                         if(buf[i]=='L'){
                                 if(buf[i+1]=='E'){
@@ -116,13 +116,14 @@ int decrpyt(unsigned char *buf, int flag, char *filename) {
 
                 // 공개키로 복호화
 		unsigned char *certification=(uchar*)malloc(2048);
+		memset(certification, 0, 2048);
                 RSA_decrypt(cer_target_string,cer_len, certification, &cer_len);
-		
 		
 		//to do: check certification
 
 		AES_Decrypt(buf+observer_start, decrpyted);
-		tee_store(filename, decrpyted);
+		tee_store("decrypted_command", decrpyted);
+		printf("store: %s\n", decrpyted);
 		status =1;
 
 		free(certification);
@@ -156,7 +157,7 @@ void do_decrypt(char *filename, int flag, char *decryptedfile) {
 	}
 
 	memset(buf, 0, 2048);
-   	FILE *file = fopen(filename, "r");
+	FILE *file = fopen(filename, "r");
    	fseek(file, 0, SEEK_SET);
    	
    	//while (fgets(buf, 256, file)) {}
@@ -164,6 +165,7 @@ void do_decrypt(char *filename, int flag, char *decryptedfile) {
 	fclose(file);
 
 	// 복호화 진행
+	//printf("buf: %s\n", buf);
 	error = decrpyt(buf, flag, decryptedfile);
 
 	printf("decrypt status\n");

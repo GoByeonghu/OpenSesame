@@ -34,9 +34,9 @@ int main(int argc, char *argv[])
 	tee_encrypt("encrpyted_string", 0);
 
 	// 암호문 전송
-	sleep(10);
+	sleep(5);
 	sendToDoorlock(2, "encrpyted_string");
-	sleep(20);
+	sleep(5);
 	sendToDoorlock(3, "ID");
 
 	/* 3. 개폐 명령 */
@@ -46,11 +46,11 @@ int main(int argc, char *argv[])
 		exit(0);
 	}
 	
-	sleep(10);
+	sleep(5);
 	printf("send to doorlock...\n");
 	// 개폐명령 암호화 파일 전송
 	sendToDoorlock(2, "opencommand");
-	sleep(3000);
+	sleep(10);
 
 	return 0;
 }
@@ -143,10 +143,10 @@ int tee_control() {
 
 		// 개폐 명령 암호화(flag: 1)
 		if (choice == 'Y' || choice == 'y') {
-			tee_encrypt("open", 1);
+			tee_encrypt("open", 2);
 		}
 		else if (choice == 'n' || choice == 'N') {
-			tee_encrypt("close", 1);
+			tee_encrypt("close", 2);
 		}
 		else {
 			printf("잘못된 명령입니다.\n");

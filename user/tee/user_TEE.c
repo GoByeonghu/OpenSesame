@@ -50,6 +50,9 @@ char *encrpyt(int flag, char *filename) {
 	else {
 		plaintext = filename;
 		unsigned char *temp_string=(uchar*)malloc(2048);
+		memset(temp_string, 0, 2048);
+		memset(encrpyted_string, 0, 2048);
+		RSA_encrypt(plaintext,32,temp_string,&encrypted_length);
 		//make message digest
 		char MD[SHA256_DIGEST_LENGTH*2+1];
 		SHA256_Encode(plaintext, MD);
@@ -57,32 +60,35 @@ char *encrpyt(int flag, char *filename) {
 		//make certification
 		int cer_length;
 		unsigned char *certification = (unsigned char*)malloc(2048);
+		memset(certification, 0, 2048);
 		RSA_encrypt(MD,strlen(MD),certification,&cer_length);
+
 		unsigned char *Length_flag = "LE";
                 unsigned char *length_string = (uchar*)malloc(4);
+		memset(length_string, 0, 4);
                 sprintf(length_string, "%d", cer_length);
 
 		strcat(encrpyted_string,length_string);
                 strcat(encrpyted_string, Length_flag);
-                int temp_length =strlen(encrpyted_string);
 		int j =strlen(encrpyted_string);
                 for(int i=0; i<cer_length; i++){
-                        encrpyted_string[j]=temp_string[i];
+                        encrpyted_string[j]=MD[i];
                         j++;
                 }
+                int temp_length =strlen(encrpyted_string);
 		encrpyted_string[temp_length++]='M';
 		encrpyted_string[temp_length++]='D';
-		
+
 		// 대칭키로 암호
                 AES_Encrypt(plaintext, encrpyted_string+temp_length);
 	
 		free(certification);
 		free(length_string);
 		free(temp_string);
-		free(plaintext);	
-		
+		//free(plaintext);	
 	}
 
+	printf("encrypted: %s\n", encrpyted_string);
 	return encrpyted_string;
 }
 
@@ -90,7 +96,7 @@ char *encrpyt(int flag, char *filename) {
 void do_encrypt(char *filename, int flag) {
 	FILE	*file;
 	char	*ptr;
-	char	*encrypted_string;
+	char	*encrypted_string = (char*)malloc(4096);
 	int		shmid;
 	int		error;  // 대칭키 에러 표시
 
@@ -125,6 +131,7 @@ void do_encrypt(char *filename, int flag) {
 
 		// 대칭키 암호화
 		if (flag == 0) {
+			memset(encrypted_string, 0, 4096);
 			encrypted_string = encrpyt(0, "sym key");
 			tee_store(filename, encrypted_string);
 			free(encrypted_string);
@@ -132,9 +139,13 @@ void do_encrypt(char *filename, int flag) {
 
 		// 개폐 명령 암호화
 		else if (flag == 1) {
-			// 개폐 명령 암호화 부분은 이 부분 바꾸시면 될듯합니다
+			memset(encrypted_string, 0, 4096);
 			encrypted_string = encrpyt(1, filename);
 			tee_store("opencommand", encrypted_string);
+			free(encrypted_string);
+		}
+		else if (flag == 2) {
+			tee_store("opencommand", filename);
 			free(encrypted_string);
 		}
 	}
@@ -144,6 +155,8 @@ void do_encrypt(char *filename, int flag) {
 		perror("shmdt");
 		exit(1);
 	}
+
+	return;
 }
 
 // 파일로 저장

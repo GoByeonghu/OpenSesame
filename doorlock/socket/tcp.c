@@ -72,6 +72,7 @@ void recvFromUser(char *filename, int fileFlag)
 		exit(1);
 	}
 	
+	setsockopt(newSockfd, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option));
 	char flag[10];
 	read(newSockfd, flag, 4);
 
