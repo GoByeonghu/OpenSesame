@@ -23,15 +23,15 @@ int decrpyt(unsigned char *buf, int flag, char *filename) {
 		printf("decrypt flag 0-1\n");
 		int len;
 		int decrypted_length;
-		unsigned char *len_string=(unsigned char*)malloc(4);
+		unsigned char *len_string=(unsigned char*)malloc(2048);
 		unsigned char *target_string=(unsigned char*)malloc(2048);
 		memset(len_string, 0, 4);
 		memset(target_string, 0, 2048);
 		memset(decrpyted, 0, 1000000);
 
-		printf("here\n");
+		printf("buf: %s\n\n", buf);
 		int k =0;
-		for(int i=0; i<sizeof(buf)-2; i++){
+		for(int i=0; i<2046; i++){
 			len_string[i]=buf[i];
 			if(buf[i]=='L'){
 				if(buf[i+1]='E'){
@@ -73,7 +73,7 @@ int decrpyt(unsigned char *buf, int flag, char *filename) {
                 int k =0;
 		int observer_start=0;
 		int observer_end=0;
-                for(int i=0; i<sizeof(buf)-2; i++){
+                for(int i=0; i<2048; i++){
                         len_string[i]=buf[i];
                         if(buf[i]=='L'){
                                 if(buf[i+1]='E'){
