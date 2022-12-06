@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
 	// 암호문 전송
 	sleep(10);
 	sendToDoorlock(2, "encrpyted_string");
-	sleep(10);
+	sleep(20);
 	sendToDoorlock(3, "ID");
 
 	/* 3. 개폐 명령 */
@@ -45,8 +45,9 @@ int main(int argc, char *argv[])
 		printf("프로그램을 종료합니다.");
 		exit(0);
 	}
-	sleep(3000);
-
+	
+	sleep(10);
+	printf("send to doorlock...\n");
 	// 개폐명령 암호화 파일 전송
 	sendToDoorlock(2, "opencommand");
 	sleep(3000);
@@ -92,7 +93,7 @@ int user_register()
 // [Function]: 유저 정보를 입력 받음
 // [input]: ID(char *), PW(char *)
 // [output]: nothing
-static void getUsrInfo(char *ID, char *PW)
+void getUsrInfo(char *ID, char *PW)
 {
     printf("ID: ");
     if (!fgets(ID, MAX_IDPW_LENGTH, stdin))
@@ -119,35 +120,38 @@ static void getUsrInfo(char *ID, char *PW)
 // [input]: nothing
 // [output]: 상태 값(int)
 int tee_control() {
-	char choice[2];
+	char choice;
 	char ID[MAX_IDPW_LENGTH];
 	char PW[MAX_IDPW_LENGTH];
 	
-	while(1)
-	{
-    	printf("\n===== 도어락을 여시겠습니까? [Y/N] ===== ");
-		if (!fgets(choice, 1, stdin))
+	//while(1)
+	//{
+    	printf("\n===== 도어락을 여시겠습니까? [Y/N] ===== \n");
+		choice = fgetc(stdin);
+		fgetc(stdin);
+		if (!(choice == 'Y' || choice == 'y' || choice == 'N' || choice == 'n'))
 		{
 			perror("명령어 입력이 잘못되었습니다.\n");
 			return 0; // fail
 		}
-
-		getUsrInfo(ID, PW);
+		else {
+			getUsrInfo(ID, PW);
+		}
 
 		// todo: 유저 인증
 		// 그냥 ok라고 하기
 
 		// 개폐 명령 암호화(flag: 1)
-		if (choice[0] == 'Y' || choice[0] == 'y') {
+		if (choice == 'Y' || choice == 'y') {
 			tee_encrypt("open", 1);
 		}
-		else if (choice[0] == 'n' || choice[0] == 'N') {
+		else if (choice == 'n' || choice == 'N') {
 			tee_encrypt("close", 1);
 		}
 		else {
 			printf("잘못된 명령입니다.\n");
 		}
-	}
+	//}
 
 	// success
     return 1;	

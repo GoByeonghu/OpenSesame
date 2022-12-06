@@ -161,11 +161,11 @@ int AES_Encrypt(unsigned char *target, unsigned char *result){
   OpenSSL_add_all_algorithms();
  /* Encrypt the plaintext */
   ciphertext_len = encrypt(plaintext, strlen(plaintext), key, iv, ciphertext);
-  printf("\nCL:%d\n",ciphertext_len);
+  //printf("\nCL:%d\n",ciphertext_len);
   /* Do something useful with the ciphertext here */
-  printf("Ciphertext is:\n");
+  //printf("Ciphertext is:\n");
   BIO_dump_fp(stdout, ciphertext, ciphertext_len);
-  printf("%s\n",ciphertext);
+  //printf("%s\n",ciphertext);
   //after
   EVP_cleanup();
   ERR_free_strings();

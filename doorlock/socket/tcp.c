@@ -71,12 +71,7 @@ void recvFromUser(char *filename, int fileFlag)
 		perror("accept");
 		exit(1);
 	}
-	/* socket descriptor에서 정보를 읽음
-	if((n=read(newSockfd,&msg,sizeof(msg)))<0){
-		perror("read");
-		exit(1);
-	}
-	*/
+	
 	char flag[10];
 	read(newSockfd, flag, 4);
 
@@ -88,10 +83,8 @@ void recvFromUser(char *filename, int fileFlag)
 		int nbyte = 256;
 		while (nbyte != 0)
 		{
-			printf("nbyte: %d\n", nbyte);
 			nbyte = recv(newSockfd, buf, bufsize, 0);
 			int status = fwrite(buf, sizeof(char), nbyte, file);
-			printf("status: %d\n", status);
 			if (status == 16) {
 				break;
 			}
@@ -127,6 +120,9 @@ void recvFromUser(char *filename, int fileFlag)
 		{
 			nbyte = recv(newSockfd, buf, bufsize, 0);
 			fwrite(buf, sizeof(char), nbyte, file);
+			if (nbyte < bufsize) {
+				break;
+			}
 		}
 		fclose(file);
 
@@ -159,7 +155,10 @@ void recvFromUser(char *filename, int fileFlag)
 		int nbyte = 256;
 		while (nbyte != 0)
 		{
+			printf("nbyte: %d\n", nbyte);
 			nbyte = recv(newSockfd, buf, bufsize, 0);
+			if (nbyte < bufsize)
+				break;
 			fwrite(buf, sizeof(char), nbyte, file);
 		}
 		fclose(file);

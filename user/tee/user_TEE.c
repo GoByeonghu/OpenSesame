@@ -71,7 +71,10 @@ char *encrpyt(int flag, char *filename) {
 		
 		// 대칭키로 암호
                 AES_Encrypt(plaintext, encrpyted_string+temp_length);
-		
+	
+		free(certification);
+		free(length_string);
+		free(temp_string);	
 		
 	}
 
@@ -118,7 +121,6 @@ void do_encrypt(char *filename, int flag) {
 		// 대칭키 암호화
 		if (flag == 0) {
 			encrypted_string = encrpyt(0, "sym key");
-			printf("encrypted_string: %s\n", encrypted_string);
 			tee_store(filename, encrypted_string);
 			free(encrypted_string);
 		}

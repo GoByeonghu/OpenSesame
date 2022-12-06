@@ -31,7 +31,7 @@ int tee_encrypt(char *filename, int flag){
 		// 플래그도 같이 전송해서 어떤 걸 암호화 하는지
 		// filename: close, flag: 1
 		do_encrypt(filename, flag);
-		
+		exit(1);	
 	}
 
 	// 현재( == user)  프로세스

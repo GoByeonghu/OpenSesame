@@ -13,7 +13,7 @@ int SHA256_Encode(char *target, char *result) {
          sprintf(&mdString[i*2], "%02x", (unsigned int)digest[i]);
 
     strcpy(result,mdString);
-    printf("SHA256 digest: %s\n", mdString);
+    //printf("SHA256 digest: %s\n", mdString);
 
 
     return 0;
